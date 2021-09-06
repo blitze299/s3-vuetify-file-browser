@@ -2,25 +2,8 @@
 
 Open source file manager component for Vue.js. Requires Vuetify v2.0 or higher.
 
-[💣 Demo](https://vuetify-file-browser-demo.herokuapp.com/) 
-
-[🚀 Backend](https://github.com/semeniuk/vuetify-file-browser-server)
-
 ![Screenshot](https://user-images.githubusercontent.com/15949274/65264191-c6a55c00-db16-11e9-841a-81e3906e5ca7.PNG)
 
-## Features
-
-**Storages:**
-- [x] Local Filesystem;
-- [x] Amazon S3;
-- [ ] Dropbox;
-- [ ] Google Drive;
-
-**Functions:**
-- [x] Multiple file uploading
-- [x] Create folder;
-- [x] Delete file/folder;
-- [x] Filtering;
 
 ## Usage
 
