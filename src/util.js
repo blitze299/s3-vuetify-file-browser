@@ -27,7 +27,7 @@ export function formatS3ToPathObj(raw) {
             t.push(
               (temp = {
                 name,
-                id: a.slice(0, i + 1).join("."),
+                path: a.slice(0, i + 1).join("/"),
                 elem: path,
                 type: "file",
               })
@@ -38,7 +38,7 @@ export function formatS3ToPathObj(raw) {
             t.push(
               (temp = {
                 name,
-                id: a.slice(0, i + 1).join("."),
+                path: a.slice(0, i + 1).join("/"),
                 children: [],
                 type: "folder",
               })

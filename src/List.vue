@@ -1,6 +1,6 @@
 <template>
   <v-card flat tile min-height="380" class="d-flex flex-column">
-    {{items}}
+    {{ filestructure }}
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"
@@ -111,102 +111,104 @@ import { formatBytes } from "./util";
 import Confirm from "./Confirm.vue";
 
 export default {
-    props: {
-        icons: Object,
-        storage: String,
-        path: String,
-        endpoints: Object,
-        axios: Function,
-        refreshPending: Boolean
+  props: {
+    filestructure: Array,
+    icons: Object,
+    storage: String,
+    path: String,
+    endpoints: Object,
+    axios: Function,
+    refreshPending: Boolean,
+  },
+  components: {
+    Confirm,
+  },
+  data() {
+    return {
+      items: [],
+      filter: "",
+    };
+  },
+  computed: {
+    dirs() {
+      return this.items.filter(
+        (item) => item.type === "folder" && item.basename.includes(this.filter)
+      );
     },
-    components: {
-        Confirm
+    files() {
+      return this.items.filter(
+        (item) => item.type === "file" && item.basename.includes(this.filter)
+      );
     },
-    data () {
-        return {
-            items: [],
-            filter: ""
+    isDir() {
+      return this.path[this.path.length - 1] === "/";
+    },
+    isFile() {
+      return !this.isDir;
+    },
+  },
+  methods: {
+    formatBytes,
+    changePath(path) {
+      this.$emit("path-changed", path);
+    },
+   load() {
+      this.$emit("loading", true);
+      if (this.isDir) {
+        /*let url = this.endpoints.list.url
+          .replace(new RegExp("{storage}", "g"), this.storage)
+          .replace(new RegExp("{path}", "g"), this.path);
+
+        let config = {
+          url,
+          method: this.endpoints.list.method || "get",
         };
+
+        let response = await this.axios.request(config);
+        this.items = response.data;*/
+        console.warn(item.path)
+      } else {
+        // TODO: load file
+      }
+      this.$emit("loading", false);
     },
-    computed: {
-        dirs () {
-            return this.items.filter(
-                (item) => item.type === "dir" && item.basename.includes(this.filter)
-            );
-        },
-        files () {
-            return this.items.filter(
-                (item) => item.type === "file" && item.basename.includes(this.filter)
-            );
-        },
-        isDir () {
-            return this.path[this.path.length - 1] === "/";
-        },
-        isFile () {
-            return !this.isDir;
-        }
+    async deleteItem(item) {
+      let confirmed = await this.$refs.confirm.open(
+        "Delete",
+        `Are you sure<br>you want to delete this ${
+          item.type === "folder" ? "folder" : "file"
+        }?<br><em>${item.basename}</em>`
+      );
+
+      if (confirmed) {
+        this.$emit("loading", true);
+        let url = this.endpoints.delete.url
+          .replace(new RegExp("{storage}", "g"), this.storage)
+          .replace(new RegExp("{path}", "g"), item.path);
+
+        let config = {
+          url,
+          method: this.endpoints.delete.method || "post",
+        };
+
+        await this.axios.request(config);
+        this.$emit("file-deleted");
+        this.$emit("loading", false);
+      }
     },
-    methods: {
-        formatBytes,
-        changePath (path) {
-            this.$emit("path-changed", path);
-        },
-        async load () {
-            this.$emit("loading", true);
-            if (this.isDir) {
-                let url = this.endpoints.list.url
-                    .replace(new RegExp("{storage}", "g"), this.storage)
-                    .replace(new RegExp("{path}", "g"), this.path);
-
-                let config = {
-                    url,
-                    method: this.endpoints.list.method || "get"
-                };
-
-                let response = await this.axios.request(config);
-                this.items = response.data;
-            } else {
-                // TODO: load file
-            }
-            this.$emit("loading", false);
-        },
-        async deleteItem (item) {
-            let confirmed = await this.$refs.confirm.open(
-                "Delete",
-                `Are you sure<br>you want to delete this ${
-                    item.type === "dir" ? "folder" : "file"
-                }?<br><em>${item.basename}</em>`
-            );
-
-            if (confirmed) {
-                this.$emit("loading", true);
-                let url = this.endpoints.delete.url
-                    .replace(new RegExp("{storage}", "g"), this.storage)
-                    .replace(new RegExp("{path}", "g"), item.path);
-
-                let config = {
-                    url,
-                    method: this.endpoints.delete.method || "post"
-                };
-
-                await this.axios.request(config);
-                this.$emit("file-deleted");
-                this.$emit("loading", false);
-            }
-        }
+  },
+  watch: {
+    async path() {
+      this.items = [];
+      await this.load();
     },
-    watch: {
-        async path () {
-            this.items = [];
-            await this.load();
-        },
-        async refreshPending () {
-            if (this.refreshPending) {
-                await this.load();
-                this.$emit("refreshed");
-            }
-        }
-    }
+    async refreshPending() {
+      if (this.refreshPending) {
+        await this.load();
+        this.$emit("refreshed");
+      }
+    },
+  },
 };
 </script>
 

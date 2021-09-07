@@ -1,7 +1,6 @@
 <template>
     <v-card flat tile width="250" min-height="380" class="d-flex flex-column folders-tree-card">
         <div class="grow scroll-x">
-            {{filestructure}}
             <v-treeview
                 :open="open"
                 :active="active"
@@ -10,7 +9,7 @@
                 :load-children="readFolder"
                 v-on:update:active="activeChanged"
                 item-key="path"
-                item-text="basename"
+                item-text="name"
                 dense
                 activatable
                 transition
@@ -18,15 +17,15 @@
             >
                 <template v-slot:prepend="{ item, open }">
                     <v-icon
-                        v-if="item.type === 'dir'"
+                        v-if="item.type === 'folder'"
                     >{{ open ? 'mdi-folder-open-outline' : 'mdi-folder-outline' }}</v-icon>
-                    <v-icon v-else>{{ icons[item.extension.toLowerCase()] || icons['other'] }}</v-icon>
+                    <v-icon v-else>{{ icons[item.name.split(".")[1].toLowerCase()] || icons['other'] }}</v-icon>
                 </template>
                 <template v-slot:label="{ item }">
-                    {{item.basename}}
+                    {{item.name}}
                     <v-btn
                         icon
-                        v-if="item.type === 'dir'"
+                        v-if="item.type === 'folder'"
                         @click.stop="readFolder(item)"
                         class="ml-1"
                     >
@@ -61,7 +60,7 @@
 <script>
 export default {
     props: {
-        filestructure: Object,
+        filestructure: Array,
         icons: Object,
         storage: String,
         path: String,
@@ -73,28 +72,12 @@ export default {
         return {
             open: [],
             active: [],
-            items: [],
             filter: ""
         };
     },
     methods: {
         init () {
             this.open = [];
-            this.items = [];
-            // set default files tree items (root item) in nextTick.
-            // Otherwise this.open isn't cleared properly (due to syncing perhaps)
-            setTimeout(() => {
-                this.items = [
-                    {
-                        type: "dir",
-                        path: "/",
-                        basename: "root",
-                        extension: "",
-                        name: "root",
-                        children: []
-                    }
-                ];
-            }, 0);
             if (this.path !== "") {
                 this.$emit("path-changed", "");
             }
@@ -114,7 +97,7 @@ export default {
 
             // eslint-disable-next-line require-atomic-updates
             item.children = response.data.map(item => {
-                if (item.type === "dir") {
+                if (item.type === "folder") {
                     item.children = [];
                 }
                 return item;
@@ -123,6 +106,7 @@ export default {
             this.$emit("loading", false);
         },
         activeChanged (active) {
+            console.log(active)
             this.active = active;
             let path = "";
             if (active.length) {
@@ -134,7 +118,7 @@ export default {
         },
         findItem (path) {
             let stack = [];
-            stack.push(this.items[0]);
+            stack.push(this.filestructure[0]);
             while (stack.length > 0) {
                 let node = stack.pop();
                 if (node.path == path) {

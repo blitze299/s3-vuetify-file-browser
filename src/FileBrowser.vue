@@ -1,6 +1,5 @@
 <template>
   <v-card class="mx-auto" :loading="loading > 0">
-    {{ filestructure }}
     <toolbar
       :path="path"
       :storages="storagesArray"
@@ -30,6 +29,7 @@
       <v-divider v-if="tree" vertical></v-divider>
       <v-col>
         <list
+          :filestructure="filestructure"
           :path="path"
           :storage="activeStorage"
           :icons="icons"
