@@ -1,5 +1,6 @@
 <template>
   <v-card flat tile min-height="380" class="d-flex flex-column">
+    {{items}}
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"
@@ -106,7 +107,7 @@
 </template>
 
 <script>
-import { formatBytes, formatS3ToPathObj } from "./util";
+import { formatBytes } from "./util";
 import Confirm from "./Confirm.vue";
 
 export default {
@@ -164,14 +165,6 @@ export default {
 
                 let response = await this.axios.request(config);
                 this.items = response.data;
-                console.log(this.items);
-                const s3data = await this.axios.request({
-                    url:
-            "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210907%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210907T085550Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=ab7282a6331aca7a61164f5401e3a43e899dd7954ff60bee47a163bb5ea393d8",
-                    method: "get"
-                });
-                const format = formatS3ToPathObj(s3data.data);
-                console.warn(format)
             } else {
                 // TODO: load file
             }

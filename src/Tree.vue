@@ -1,10 +1,11 @@
 <template>
     <v-card flat tile width="250" min-height="380" class="d-flex flex-column folders-tree-card">
         <div class="grow scroll-x">
+            {{filestructure}}
             <v-treeview
                 :open="open"
                 :active="active"
-                :items="items"
+                :items="filestructure"
                 :search="filter"
                 :load-children="readFolder"
                 v-on:update:active="activeChanged"
@@ -60,6 +61,7 @@
 <script>
 export default {
     props: {
+        filestructure: Object,
         icons: Object,
         storage: String,
         path: String,
