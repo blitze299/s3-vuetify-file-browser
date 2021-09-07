@@ -91,17 +91,17 @@ export default {
         endpoints: Object,
         axios: Function
     },
-    data() {
+    data () {
         return {
             newFolderPopper: false,
             newFolderName: ""
         };
     },
     computed: {
-        pathSegments() {
-            let path = "/",
-                isFolder = this.path[this.path.length - 1] === "/",
-                segments = this.path.split("/").filter(item => item);
+        pathSegments () {
+            let path = "/";
+            let isFolder = this.path[this.path.length - 1] === "/";
+            let segments = this.path.split("/").filter(item => item);
 
             segments = segments.map((item, index) => {
                 path +=
@@ -114,33 +114,33 @@ export default {
 
             return segments;
         },
-        storageObject() {
+        storageObject () {
             return this.storages.find(item => item.code == this.storage);
         }
     },
     methods: {
-        changeStorage(code) {
+        changeStorage (code) {
             if (this.storage != code) {
                 this.$emit("storage-changed", code);
                 this.$emit("path-changed", "");
             }
         },
-        changePath(path) {
+        changePath (path) {
             this.$emit("path-changed", path);
         },
-        goUp() {
-            let segments = this.pathSegments,
-                path =
+        goUp () {
+            let segments = this.pathSegments;
+            let path =
                     segments.length === 1
                         ? "/"
                         : segments[segments.length - 2].path;
             this.changePath(path);
         },
-        async addFiles(event) {
+        async addFiles (event) {
             this.$emit("add-files", event.target.files);
             this.$refs.inputUpload.value = "";
         },
-        async mkdir() {
+        async mkdir () {
             this.$emit("loading", true);
             let url = this.endpoints.mkdir.url
                 .replace(new RegExp("{storage}", "g"), this.storage)

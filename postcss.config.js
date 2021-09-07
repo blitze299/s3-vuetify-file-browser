@@ -2,16 +2,16 @@
 // cssnano      - https://github.com/hail2u/node-css-mqpacker
 
 module.exports = {
-  plugins: [
-    require('autoprefixer'),
-    require('cssnano')({
-      preset: [
-        'default', {
-          discardComments: {
-            removeAll: true
-          }
-        }
-      ]
-    })
-  ]
+    plugins: [
+        require('autoprefixer'),
+        require('cssnano')({
+            preset: [
+                'default', {
+                    discardComments: {
+                        removeAll: true
+                    }
+                }
+            ]
+        })
+    ]
 }

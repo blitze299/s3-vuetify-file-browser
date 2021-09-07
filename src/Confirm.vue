@@ -45,11 +45,11 @@ export default {
         title: null,
         options: {
             color: "error",
-            width: 300,
+            width: 300
         }
     }),
     methods: {
-        open(title, message, options) {
+        open (title, message, options) {
             this.dialog = true;
             this.title = title;
             this.message = message;
@@ -59,11 +59,11 @@ export default {
                 this.reject = reject;
             });
         },
-        agree() {
+        agree () {
             this.resolve(true);
             this.dialog = false;
         },
-        cancel() {
+        cancel () {
             this.resolve(false);
             this.dialog = false;
         }

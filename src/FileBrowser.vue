@@ -79,11 +79,11 @@ const availableStorages = [
         code: "s3",
         icon: "mdi-amazon-drive"
     }
-    /*{
+    /* {
         name: "Dropbox",
         code: "dropbox",
         icon: "mdi-dropbox"
-    }*/
+    } */
 ];
 
 const endpoints = {
@@ -149,7 +149,7 @@ export default {
         // max file size to upload. Unlimited by default
         maxUploadFileSize: { type: Number, default: 0 }
     },
-    data() {
+    data () {
         return {
             loading: 0,
             path: "",
@@ -160,9 +160,9 @@ export default {
         };
     },
     computed: {
-        storagesArray() {
-            let storageCodes = this.storages.split(","),
-                result = [];
+        storagesArray () {
+            let storageCodes = this.storages.split(",");
+            let result = [];
             storageCodes.forEach(code => {
                 result.push(availableStorages.find(item => item.code == code));
             });
@@ -170,17 +170,17 @@ export default {
         }
     },
     methods: {
-        loadingChanged(loading) {
+        loadingChanged (loading) {
             if (loading) {
                 this.loading++;
             } else if (this.loading > 0) {
                 this.loading--;
             }
         },
-        storageChanged(storage) {
+        storageChanged (storage) {
             this.activeStorage = storage;
         },
-        addUploadingFiles(files) {
+        addUploadingFiles (files) {
             files = Array.from(files);
 
             if (this.maxUploadFileSize) {
@@ -192,30 +192,30 @@ export default {
             if (this.uploadingFiles === false) {
                 this.uploadingFiles = [];
             }
-            
+
             if (this.maxUploadFilesCount && this.uploadingFiles.length + files.length > this.maxUploadFilesCount) {
                 files = files.slice(0, this.maxUploadFilesCount - this.uploadingFiles.length);
             }
 
             this.uploadingFiles.push(...files);
         },
-        removeUploadingFile(index) {
+        removeUploadingFile (index) {
             this.uploadingFiles.splice(index, 1);
         },
-        uploaded() {
+        uploaded () {
             this.uploadingFiles = false;
             this.refreshPending = true;
         },
-        pathChanged(path) {
+        pathChanged (path) {
             this.path = path;
             this.$emit("change", path);
         }
     },
-    created() {
+    created () {
         this.activeStorage = this.storage;
         this.axiosInstance = this.axios || axios.create(this.axiosConfig);
     },
-    mounted() {
+    mounted () {
         if (!this.path && !(this.tree && this.$vuetify.breakpoint.smAndUp)) {
             this.pathChanged("/");
         }

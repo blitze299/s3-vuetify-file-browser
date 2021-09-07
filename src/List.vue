@@ -1,104 +1,112 @@
 <template>
-    <v-card flat tile min-height="380" class="d-flex flex-column">
-        <confirm ref="confirm"></confirm>
-        <v-card-text
-            v-if="!path"
-            class="grow d-flex justify-center align-center grey--text"
-        >Select a folder or a file</v-card-text>
-        <v-card-text
-            v-else-if="isFile"
-            class="grow d-flex justify-center align-center"
-        >File: {{ path }}</v-card-text>
-        <v-card-text v-else-if="dirs.length || files.length" class="grow">
-            <v-list subheader v-if="dirs.length">
-                <v-subheader>Folders</v-subheader>
-                <v-list-item
-                    v-for="item in dirs"
-                    :key="item.basename"
-                    @click="changePath(item.path)"
-                    class="pl-0"
-                >
-                    <v-list-item-avatar class="ma-0">
-                        <v-icon>mdi-folder-outline</v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-content class="py-2">
-                        <v-list-item-title v-text="item.basename"></v-list-item-title>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                        <v-btn icon @click.stop="deleteItem(item)">
-                            <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-                        </v-btn>
-                        <v-btn icon v-if="false">
-                            <v-icon color="grey lighten-1">mdi-information</v-icon>
-                        </v-btn>
-                    </v-list-item-action>
-                </v-list-item>
-            </v-list>
-            <v-divider v-if="dirs.length && files.length"></v-divider>
-            <v-list subheader v-if="files.length">
-                <v-subheader>Files</v-subheader>
-                <v-list-item
-                    v-for="item in files"
-                    :key="item.basename"
-                    @click="changePath(item.path)"
-                    class="pl-0"
-                >
-                    <v-list-item-avatar class="ma-0">
-                        <v-icon>{{ icons[item.extension.toLowerCase()] || icons['other'] }}</v-icon>
-                    </v-list-item-avatar>
-
-                    <v-list-item-content class="py-2">
-                        <v-list-item-title v-text="item.basename"></v-list-item-title>
-                        <v-list-item-subtitle>{{ formatBytes(item.size) }}</v-list-item-subtitle>
-                    </v-list-item-content>
-
-                    <v-list-item-action>
-                        <v-btn icon @click.stop="deleteItem(item)">
-                            <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-                        </v-btn>
-                        <v-btn icon v-if="false">
-                            <v-icon color="grey lighten-1">mdi-information</v-icon>
-                        </v-btn>
-                    </v-list-item-action>
-                </v-list-item>
-            </v-list>
-        </v-card-text>
-        <v-card-text
-            v-else-if="filter"
-            class="grow d-flex justify-center align-center grey--text py-5"
-        >No files or folders found</v-card-text>
-        <v-card-text
-            v-else
-            class="grow d-flex justify-center align-center grey--text py-5"
-        >The folder is empty</v-card-text>
-        <v-divider v-if="path"></v-divider>
-        <v-toolbar v-if="false && path && isFile" dense flat class="shrink">
-            <v-btn icon>
-                <v-icon>mdi-download</v-icon>
+  <v-card flat tile min-height="380" class="d-flex flex-column">
+    <confirm ref="confirm"></confirm>
+    <v-card-text
+      v-if="!path"
+      class="grow d-flex justify-center align-center grey--text"
+      >Select a folder or a file</v-card-text
+    >
+    <v-card-text
+      v-else-if="isFile"
+      class="grow d-flex justify-center align-center"
+      >File: {{ path }}</v-card-text
+    >
+    <v-card-text v-else-if="dirs.length || files.length" class="grow">
+      <v-list subheader v-if="dirs.length">
+        <v-subheader>Folders</v-subheader>
+        <v-list-item
+          v-for="item in dirs"
+          :key="item.basename"
+          @click="changePath(item.path)"
+          class="pl-0"
+        >
+          <v-list-item-avatar class="ma-0">
+            <v-icon>mdi-folder-outline</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content class="py-2">
+            <v-list-item-title v-text="item.basename"></v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-btn icon @click.stop="deleteItem(item)">
+              <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
             </v-btn>
-        </v-toolbar>
-        <v-toolbar v-if="path && isDir" dense flat class="shrink">
-            <v-text-field
-                solo
-                flat
-                hide-details
-                label="Filter"
-                v-model="filter"
-                prepend-inner-icon="mdi-filter-outline"
-                class="ml-n3"
-            ></v-text-field>
             <v-btn icon v-if="false">
-                <v-icon>mdi-eye-settings-outline</v-icon>
+              <v-icon color="grey lighten-1">mdi-information</v-icon>
             </v-btn>
-            <v-btn icon @click="load">
-                <v-icon>mdi-refresh</v-icon>
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
+      <v-divider v-if="dirs.length && files.length"></v-divider>
+      <v-list subheader v-if="files.length">
+        <v-subheader>Files</v-subheader>
+        <v-list-item
+          v-for="item in files"
+          :key="item.basename"
+          @click="changePath(item.path)"
+          class="pl-0"
+        >
+          <v-list-item-avatar class="ma-0">
+            <v-icon>{{
+              icons[item.extension.toLowerCase()] || icons["other"]
+            }}</v-icon>
+          </v-list-item-avatar>
+
+          <v-list-item-content class="py-2">
+            <v-list-item-title v-text="item.basename"></v-list-item-title>
+            <v-list-item-subtitle>{{
+              formatBytes(item.size)
+            }}</v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <v-btn icon @click.stop="deleteItem(item)">
+              <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
             </v-btn>
-        </v-toolbar>
-    </v-card>
+            <v-btn icon v-if="false">
+              <v-icon color="grey lighten-1">mdi-information</v-icon>
+            </v-btn>
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
+    </v-card-text>
+    <v-card-text
+      v-else-if="filter"
+      class="grow d-flex justify-center align-center grey--text py-5"
+      >No files or folders found</v-card-text
+    >
+    <v-card-text
+      v-else
+      class="grow d-flex justify-center align-center grey--text py-5"
+      >The folder is empty</v-card-text
+    >
+    <v-divider v-if="path"></v-divider>
+    <v-toolbar v-if="false && path && isFile" dense flat class="shrink">
+      <v-btn icon>
+        <v-icon>mdi-download</v-icon>
+      </v-btn>
+    </v-toolbar>
+    <v-toolbar v-if="path && isDir" dense flat class="shrink">
+      <v-text-field
+        solo
+        flat
+        hide-details
+        label="Filter"
+        v-model="filter"
+        prepend-inner-icon="mdi-filter-outline"
+        class="ml-n3"
+      ></v-text-field>
+      <v-btn icon v-if="false">
+        <v-icon>mdi-eye-settings-outline</v-icon>
+      </v-btn>
+      <v-btn icon @click="load">
+        <v-icon>mdi-refresh</v-icon>
+      </v-btn>
+    </v-toolbar>
+  </v-card>
 </template>
 
 <script>
-import { formatBytes } from "./util";
+import { formatBytes, formatS3ToPathObj } from "./util";
 import Confirm from "./Confirm.vue";
 
 export default {
@@ -113,38 +121,36 @@ export default {
     components: {
         Confirm
     },
-    data() {
+    data () {
         return {
             items: [],
             filter: ""
         };
     },
     computed: {
-        dirs() {
+        dirs () {
             return this.items.filter(
-                item =>
-                    item.type === "dir" && item.basename.includes(this.filter)
+                (item) => item.type === "dir" && item.basename.includes(this.filter)
             );
         },
-        files() {
+        files () {
             return this.items.filter(
-                item =>
-                    item.type === "file" && item.basename.includes(this.filter)
+                (item) => item.type === "file" && item.basename.includes(this.filter)
             );
         },
-        isDir() {
+        isDir () {
             return this.path[this.path.length - 1] === "/";
         },
-        isFile() {
+        isFile () {
             return !this.isDir;
         }
     },
     methods: {
         formatBytes,
-        changePath(path) {
+        changePath (path) {
             this.$emit("path-changed", path);
         },
-        async load() {
+        async load () {
             this.$emit("loading", true);
             if (this.isDir) {
                 let url = this.endpoints.list.url
@@ -158,12 +164,20 @@ export default {
 
                 let response = await this.axios.request(config);
                 this.items = response.data;
+                console.log(this.items);
+                const s3data = await this.axios.request({
+                    url:
+            "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210907%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210907T085550Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=ab7282a6331aca7a61164f5401e3a43e899dd7954ff60bee47a163bb5ea393d8",
+                    method: "get"
+                });
+                const format = formatS3ToPathObj(s3data.data);
+                console.warn(format)
             } else {
                 // TODO: load file
             }
             this.$emit("loading", false);
         },
-        async deleteItem(item) {
+        async deleteItem (item) {
             let confirmed = await this.$refs.confirm.open(
                 "Delete",
                 `Are you sure<br>you want to delete this ${
@@ -189,11 +203,11 @@ export default {
         }
     },
     watch: {
-        async path() {
+        async path () {
             this.items = [];
             await this.load();
         },
-        async refreshPending() {
+        async refreshPending () {
             if (this.refreshPending) {
                 await this.load();
                 this.$emit("refreshed");
@@ -205,6 +219,6 @@ export default {
 
 <style lang="scss" scoped>
 .v-card {
-    height: 100%;
+  height: 100%;
 }
 </style>

@@ -67,7 +67,7 @@ export default {
         axios: Function,
         refreshPending: Boolean
     },
-    data() {
+    data () {
         return {
             open: [],
             active: [],
@@ -76,7 +76,7 @@ export default {
         };
     },
     methods: {
-        init() {
+        init () {
             this.open = [];
             this.items = [];
             // set default files tree items (root item) in nextTick.
@@ -97,7 +97,7 @@ export default {
                 this.$emit("path-changed", "");
             }
         },
-        async readFolder(item) {
+        async readFolder (item) {
             this.$emit("loading", true);
             let url = this.endpoints.list.url
                 .replace(new RegExp("{storage}", "g"), this.storage)
@@ -120,7 +120,7 @@ export default {
 
             this.$emit("loading", false);
         },
-        activeChanged(active) {
+        activeChanged (active) {
             this.active = active;
             let path = "";
             if (active.length) {
@@ -130,7 +130,7 @@ export default {
                 this.$emit("path-changed", path);
             }
         },
-        findItem(path) {
+        findItem (path) {
             let stack = [];
             stack.push(this.items[0]);
             while (stack.length > 0) {
@@ -147,16 +147,16 @@ export default {
         }
     },
     watch: {
-        storage() {
+        storage () {
             this.init();
         },
-        path() {
+        path () {
             this.active = [this.path];
             if (!this.open.includes(this.path)) {
                 this.open.push(this.path);
             }
         },
-        async refreshPending(){
+        async refreshPending () {
             if (this.refreshPending) {
                 let item = this.findItem(this.path);
                 await this.readFolder(item);
@@ -164,7 +164,7 @@ export default {
             }
         }
     },
-    created() {
+    created () {
         this.init();
     }
 };

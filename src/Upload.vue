@@ -97,7 +97,7 @@ export default {
         maxUploadFilesCount: { type: Number, default: 0 },
         maxUploadFileSize: { type: Number, default: 0 }
     },
-    data() {
+    data () {
         return {
             loading: false,
             uploading: false,
@@ -108,7 +108,7 @@ export default {
     methods: {
         formatBytes,
 
-        async filesMap(files) {
+        async filesMap (files) {
             let promises = Array.from(files).map(file => {
                 let result = {
                     name: file.name,
@@ -121,7 +121,7 @@ export default {
                         return resolve(result);
                     }
                     var reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         result.preview = e.target.result;
                         resolve(result);
                     };
@@ -129,30 +129,30 @@ export default {
                 });
             });
 
-            return await Promise.all(promises);
+            return Promise.all(promises);
         },
 
-        async add(event) {
+        async add (event) {
             let files = Array.from(event.target.files);
             this.$emit("add-files", files);
             this.$refs.inputUpload.value = "";
         },
 
-        remove(index) {
+        remove (index) {
             this.$emit("remove-file", index);
             this.listItems.splice(index, 1);
         },
 
-        clear() {
+        clear () {
             this.$emit("clear-files");
             this.listItems = [];
         },
 
-        cancel() {
+        cancel () {
             this.$emit("cancel");
         },
 
-        async upload() {
+        async upload () {
             let formData = new FormData();
 
             // files
@@ -175,7 +175,7 @@ export default {
             };
 
             this.uploading = true;
-            let response = await this.axios.request(config);
+            await this.axios.request(config);
             this.uploading = false;
             this.$emit("uploaded");
         }
@@ -184,7 +184,7 @@ export default {
         files: {
             deep: true,
             immediate: true,
-            async handler() {
+            async handler () {
                 this.loading = true;
                 this.listItems = await this.filesMap(this.files);
                 this.loading = false;
