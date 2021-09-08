@@ -1,5 +1,6 @@
 <template>
   <v-card class="mx-auto" :loading="loading > 0">
+      {{path}}
     <toolbar
       :path="path"
       :storages="storagesArray"
@@ -98,8 +99,8 @@ const endpoints = {
 };
 
 const fileIcons = {
-  zip: "mdi-folder-zip-outline",
-  rar: "mdi-folder-zip-outline",
+  zip: "mdi-folder-zip",
+  rar: "mdi-folder-zip",
   htm: "mdi-language-html5",
   html: "mdi-language-html5",
   js: "mdi-nodejs",
@@ -114,7 +115,7 @@ const fileIcons = {
   avi: "mdi-filmstrip",
   wmv: "mdi-filmstrip",
   mov: "mdi-filmstrip",
-  txt: "mdi-file-document-outline",
+  txt: "mdi-file-document",
   xls: "mdi-file-excel",
   other: "mdi-file-outline",
 };

@@ -1,6 +1,6 @@
 <template>
   <v-card flat tile min-height="380" class="d-flex flex-column">
-    {{ filestructure }}
+    {{ path }}
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"
@@ -48,7 +48,7 @@
         >
           <v-list-item-avatar class="ma-0">
             <v-icon>{{
-              icons[item.extension.toLowerCase()] || icons["other"]
+              icons[item.name.split(".")[1].toLowerCase()] || icons["other"]
             }}</v-icon>
           </v-list-item-avatar>
 
@@ -152,7 +152,7 @@ export default {
     changePath(path) {
       this.$emit("path-changed", path);
     },
-   load() {
+    load() {
       this.$emit("loading", true);
       if (this.isDir) {
         /*let url = this.endpoints.list.url
@@ -166,7 +166,7 @@ export default {
 
         let response = await this.axios.request(config);
         this.items = response.data;*/
-        console.warn(item.path)
+        console.warn(this.path);
       } else {
         // TODO: load file
       }
