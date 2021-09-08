@@ -189,7 +189,7 @@ export default {
     async loadData() {
       const s3data = await this.axiosInstance.request({
         url:
-          "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210907%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210907T085550Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=ab7282a6331aca7a61164f5401e3a43e899dd7954ff60bee47a163bb5ea393d8",
+          "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T085922Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f87ed1356ddb801263415496d7c8e6693a29cc79f721af4972f8916092cf4f86",
         method: "get",
       });
       const result = formatS3ToPathObj(s3data.data);

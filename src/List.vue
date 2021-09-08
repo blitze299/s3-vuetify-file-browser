@@ -136,15 +136,20 @@ export default {
       );
     },
     files() {
+      console.log("trigger1");
       return this.items.filter(
         (item) => item.type === "file" && item.basename.includes(this.filter)
       );
     },
     isDir() {
-      return this.path[this.path.length - 1] === "/";
+      return (
+        this.filterData(this.filestructure, "path", this.path).type === "folder"
+      );
     },
     isFile() {
-      return !this.isDir;
+      return (
+        this.filterData(this.filestructure, "path", this.path).type === "file"
+      );
     },
   },
   methods: {
@@ -166,7 +171,7 @@ export default {
 
         let response = await this.axios.request(config);
         this.items = response.data;*/
-        console.warn(this.path);
+        //console.warn(this.path);
       } else {
         // TODO: load file
       }
@@ -194,6 +199,29 @@ export default {
         await this.axios.request(config);
         this.$emit("file-deleted");
         this.$emit("loading", false);
+      }
+    },
+
+    filterData(object, key, value) {
+      if (Array.isArray(object)) {
+        for (const obj of object) {
+          const result = this.filterData(obj, key, value);
+          if (result) {
+            return result;
+          }
+        }
+      } else {
+        if (object.hasOwnProperty(key) && object[key] === value) {
+          return object;
+        }
+
+        for (const k of Object.keys(object)) {
+          if (typeof object[k] === "object") {
+            const o = this.filterData(object[k], key, value);
+            if (o !== null && typeof o !== "undefined") return o;
+          }
+        }
+        return null;
       }
     },
   },
