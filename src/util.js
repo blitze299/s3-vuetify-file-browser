@@ -57,6 +57,16 @@ function convertXmlToJson(xml) {
   return convert.xml2json(xml, { compact: true, spaces: 4 });
 }
 
+export function getFileEnding(name) {
+  const split = name.split(".");
+  if (split.length > 1) {
+    return split[split.length - 1];
+  } else {
+    return "other";
+  }
+}
+
 export default {
   formatBytes,
+  getFileEnding
 };

@@ -3,7 +3,6 @@
       {{path}}
     <toolbar
       :path="path"
-      :storages="storagesArray"
       :storage="activeStorage"
       :endpoints="endpoints"
       :axios="axiosInstance"
@@ -73,24 +72,6 @@ import Upload from "./Upload.vue";
 
 import { formatS3ToPathObj } from "./util";
 
-const availableStorages = [
-  {
-    name: "Local",
-    code: "local",
-    icon: "mdi-folder-multiple-outline",
-  },
-  {
-    name: "Amazon S3",
-    code: "s3",
-    icon: "mdi-amazon-drive",
-  },
-  /* {
-        name: "Dropbox",
-        code: "dropbox",
-        icon: "mdi-dropbox"
-    } */
-];
-
 const endpoints = {
   list: { url: "/storage/{storage}/list?path={path}", method: "get" },
   upload: { url: "/storage/{storage}/upload?path={path}", method: "post" },
@@ -132,11 +113,6 @@ export default {
     event: "change",
   },
   props: {
-    // comma-separated list of active storage codes
-    storages: {
-      type: String,
-      default: () => availableStorages.map((item) => item.code).join(","),
-    },
     // code of default storage
     storage: { type: String, default: "local" },
     // show tree view
@@ -164,16 +140,6 @@ export default {
       refreshPending: false,
       axiosInstance: null,
     };
-  },
-  computed: {
-    storagesArray() {
-      let storageCodes = this.storages.split(",");
-      let result = [];
-      storageCodes.forEach((code) => {
-        result.push(availableStorages.find((item) => item.code == code));
-      });
-      return result;
-    },
   },
   created() {
     this.activeStorage = this.storage;

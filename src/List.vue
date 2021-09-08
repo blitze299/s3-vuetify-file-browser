@@ -1,23 +1,22 @@
 <template>
   <v-card flat tile min-height="380" class="d-flex flex-column">
-    {{ path }}
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"
       class="grow d-flex justify-center align-center grey--text"
-      >Select a folder or a file</v-card-text
+      >Wähle einen Ordner oder eine Datei aus</v-card-text
     >
     <v-card-text
       v-else-if="isFile"
       class="grow d-flex justify-center align-center"
-      >File: {{ path }}</v-card-text
+      >Datei: {{ path }}</v-card-text
     >
     <v-card-text v-else-if="dirs.length || files.length" class="grow">
       <v-list subheader v-if="dirs.length">
-        <v-subheader>Folders</v-subheader>
+        <v-subheader>Ordner</v-subheader>
         <v-list-item
           v-for="item in dirs"
-          :key="item.basename"
+          :key="item.path"
           @click="changePath(item.path)"
           class="pl-0"
         >
@@ -25,7 +24,7 @@
             <v-icon>mdi-folder-outline</v-icon>
           </v-list-item-avatar>
           <v-list-item-content class="py-2">
-            <v-list-item-title v-text="item.basename"></v-list-item-title>
+            <v-list-item-title v-text="item.name"></v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
             <v-btn icon @click.stop="deleteItem(item)">
@@ -42,20 +41,18 @@
         <v-subheader>Files</v-subheader>
         <v-list-item
           v-for="item in files"
-          :key="item.basename"
+          :key="item.path"
           @click="changePath(item.path)"
           class="pl-0"
         >
           <v-list-item-avatar class="ma-0">
-            <v-icon>{{
-              icons[item.name.split(".")[1].toLowerCase()] || icons["other"]
-            }}</v-icon>
+            <v-icon>{{ icons[getFileEnding(item.name)] }}</v-icon>
           </v-list-item-avatar>
 
           <v-list-item-content class="py-2">
-            <v-list-item-title v-text="item.basename"></v-list-item-title>
+            <v-list-item-title v-text="item.name"></v-list-item-title>
             <v-list-item-subtitle>{{
-              formatBytes(item.size)
+              formatBytes(item.elem.Size._text)
             }}</v-list-item-subtitle>
           </v-list-item-content>
 
@@ -73,12 +70,12 @@
     <v-card-text
       v-else-if="filter"
       class="grow d-flex justify-center align-center grey--text py-5"
-      >No files or folders found</v-card-text
+      >Keine Dateien oder Ordner gedunden</v-card-text
     >
     <v-card-text
       v-else
       class="grow d-flex justify-center align-center grey--text py-5"
-      >The folder is empty</v-card-text
+      >Dieser Ordner ist leer</v-card-text
     >
     <v-divider v-if="path"></v-divider>
     <v-toolbar v-if="false && path && isFile" dense flat class="shrink">
@@ -107,7 +104,7 @@
 </template>
 
 <script>
-import { formatBytes } from "./util";
+import { formatBytes, getFileEnding } from "./util";
 import Confirm from "./Confirm.vue";
 
 export default {
@@ -131,15 +128,10 @@ export default {
   },
   computed: {
     dirs() {
-      return this.items.filter(
-        (item) => item.type === "folder" && item.basename.includes(this.filter)
-      );
+      return this.filterDirsAndFiles("folder");
     },
     files() {
-      console.log("trigger1");
-      return this.items.filter(
-        (item) => item.type === "file" && item.basename.includes(this.filter)
-      );
+      return this.filterDirsAndFiles("file");
     },
     isDir() {
       return (
@@ -154,6 +146,7 @@ export default {
   },
   methods: {
     formatBytes,
+    getFileEnding,
     changePath(path) {
       this.$emit("path-changed", path);
     },
@@ -224,6 +217,23 @@ export default {
         return null;
       }
     },
+    filterDirsAndFiles(type) {
+      if (this.filestructure.length > 0) {
+        let filteredDirs = [];
+        //return directorys
+        const data = this.filterData(this.filestructure, "path", this.path);
+        if (data) {
+          data.children.forEach((r) => {
+            //chef if item is object or directory
+            if (r.type === type) {
+              filteredDirs.push(r);
+            }
+          });
+        }
+        console.log(filteredDirs);
+        return filteredDirs;
+      }
+    }
   },
   watch: {
     async path() {

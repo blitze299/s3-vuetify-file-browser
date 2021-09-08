@@ -66,6 +66,7 @@
 </template>
 
 <script>
+import { getFileEnding } from "./util";
 export default {
   props: {
     filestructure: Array,
@@ -84,6 +85,7 @@ export default {
     };
   },
   methods: {
+    getFileEnding,
     init() {
       this.open = [];
       if (this.path !== "") {
@@ -137,14 +139,6 @@ export default {
         }
       }
       return null;
-    },
-    getFileEnding(name) {
-      const split = name.split(".");
-      if (split.length > 1) {
-        return split[split.length - 1];
-      } else {
-        return "other";
-      }
     },
   },
   watch: {

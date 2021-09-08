@@ -1,29 +1,8 @@
 <template>
     <v-toolbar flat dense color="blue-grey lighten-5">
         <v-toolbar-items>
-            <v-menu offset-y v-if="storages.length > 1">
-                <template v-slot:activator="{ on }">
-                    <v-btn icon class="storage-select-button mr-3" v-on="on">
-                        <v-icon>mdi-arrow-down-drop-circle-outline</v-icon>
-                    </v-btn>
-                </template>
-                <v-list class="storage-select-list">
-                    <v-list-item
-                        v-for="(item, index) in storages"
-                        :key="index"
-                        :disabled="item.code === storageObject.code"
-                        @click="changeStorage(item.code)"
-                    >
-                        <v-list-item-icon>
-                            <v-icon v-text="item.icon"></v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title>{{ item.name }}</v-list-item-title>
-                    </v-list-item>
-                </v-list>
-            </v-menu>
-            <v-btn text :input-value="path === '/'" @click="changePath('/')">
-                <v-icon class="mr-2">{{storageObject.icon}}</v-icon>
-                {{storageObject.name}}
+            <v-btn text>
+                <v-icon class="mr-2">mdi-cloud</v-icon>
             </v-btn>
             <template v-for="(segment, index) in pathSegments">
                 <v-icon :key="index + '-icon'">mdi-chevron-right</v-icon>
@@ -85,8 +64,6 @@
 <script>
 export default {
     props: {
-        storages: Array,
-        storage: String,
         path: String,
         endpoints: Object,
         axios: Function
@@ -114,17 +91,8 @@ export default {
 
             return segments;
         },
-        storageObject () {
-            return this.storages.find(item => item.code == this.storage);
-        }
     },
     methods: {
-        changeStorage (code) {
-            if (this.storage != code) {
-                this.$emit("storage-changed", code);
-                this.$emit("path-changed", "");
-            }
-        },
         changePath (path) {
             this.$emit("path-changed", path);
         },
