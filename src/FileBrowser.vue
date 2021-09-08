@@ -1,12 +1,9 @@
 <template>
   <v-card class="mx-auto" :loading="loading > 0">
-      {{path}}
     <toolbar
       :path="path"
-      :storage="activeStorage"
       :endpoints="endpoints"
       :axios="axiosInstance"
-      v-on:storage-changed="storageChanged"
       v-on:path-changed="pathChanged"
       v-on:add-files="addUploadingFiles"
       v-on:folder-created="refreshPending = true"
@@ -16,7 +13,6 @@
         <tree
           :filestructure="filestructure"
           :path="path"
-          :storage="activeStorage"
           :icons="icons"
           :endpoints="endpoints"
           :axios="axiosInstance"
@@ -24,6 +20,7 @@
           v-on:path-changed="pathChanged"
           v-on:loading="loadingChanged"
           v-on:refreshed="refreshPending = false"
+          v-on:loadData="loadData"
         ></tree>
       </v-col>
       <v-divider v-if="tree" vertical></v-divider>
@@ -31,7 +28,6 @@
         <list
           :filestructure="filestructure"
           :path="path"
-          :storage="activeStorage"
           :icons="icons"
           :endpoints="endpoints"
           :axios="axiosInstance"
@@ -46,7 +42,6 @@
     <upload
       v-if="uploadingFiles !== false"
       :path="path"
-      :storage="activeStorage"
       :files="uploadingFiles"
       :icons="icons"
       :axios="axiosInstance"
@@ -73,8 +68,16 @@ import Upload from "./Upload.vue";
 import { formatS3ToPathObj } from "./util";
 
 const endpoints = {
-  list: { url: "/storage/{storage}/list?path={path}", method: "get" },
-  upload: { url: "/storage/{storage}/upload?path={path}", method: "post" },
+  list: {
+    url:
+      "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T085922Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f87ed1356ddb801263415496d7c8e6693a29cc79f721af4972f8916092cf4f86",
+    method: "get",
+  },
+  upload: {
+    url:
+      "https://s3.c-dev.io/plesk-backup/privat/l00000000l123.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T132319Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fe7e4c43a1d0bd09cd4da2cbb7e0dbd5bdab02b46c272e8dc9267a069fc334ce",
+    method: "put",
+  },
   mkdir: { url: "/storage/{storage}/mkdir?path={path}", method: "post" },
   delete: { url: "/storage/{storage}/delete?path={path}", method: "post" },
 };
@@ -113,8 +116,6 @@ export default {
     event: "change",
   },
   props: {
-    // code of default storage
-    storage: { type: String, default: "local" },
     // show tree view
     tree: { type: Boolean, default: true },
     // file icons set
@@ -126,23 +127,21 @@ export default {
     // custom configuration for internal axios instance
     axiosConfig: { type: Object, default: () => {} },
     // max files count to upload at once. Unlimited by default
-    maxUploadFilesCount: { type: Number, default: 0 },
+    maxUploadFilesCount: { type: Number, default: 10 },
     // max file size to upload. Unlimited by default
-    maxUploadFileSize: { type: Number, default: 0 },
+    maxUploadFileSize: { type: Number, default: 104857600 },
   },
   data() {
     return {
       filestructure: [],
       loading: 0,
       path: "",
-      activeStorage: null,
       uploadingFiles: false, // or an Array of files
       refreshPending: false,
       axiosInstance: null,
     };
   },
   created() {
-    this.activeStorage = this.storage;
     this.axiosInstance = this.axios || axios.create(this.axiosConfig);
   },
   mounted() {
@@ -154,9 +153,8 @@ export default {
   methods: {
     async loadData() {
       const s3data = await this.axiosInstance.request({
-        url:
-          "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T085922Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f87ed1356ddb801263415496d7c8e6693a29cc79f721af4972f8916092cf4f86",
-        method: "get",
+        url: this.endpoints.list.url,
+        method: this.endpoints.list.method,
       });
       const result = formatS3ToPathObj(s3data.data);
       this.filestructure = result;
@@ -164,13 +162,10 @@ export default {
     },
     loadingChanged(loading) {
       if (loading) {
-        this.loading++;
+        this.loading = 1; 
       } else if (this.loading > 0) {
-        this.loading--;
+        this.loading = 0;
       }
-    },
-    storageChanged(storage) {
-      this.activeStorage = storage;
     },
     addUploadingFiles(files) {
       files = Array.from(files);

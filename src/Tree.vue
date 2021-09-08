@@ -71,7 +71,6 @@ export default {
   props: {
     filestructure: Array,
     icons: Object,
-    storage: String,
     path: String,
     endpoints: Object,
     axios: Function,
@@ -153,8 +152,9 @@ export default {
     },
     async refreshPending() {
       if (this.refreshPending) {
-        let item = this.findItem(this.path);
-        await this.readFolder(item);
+        //let item = this.findItem(this.path);
+        //await this.readFolder(item);
+        this.$emit("loadData");
         this.$emit("refreshed");
       }
     },

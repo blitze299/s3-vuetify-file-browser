@@ -38,7 +38,7 @@
       </v-list>
       <v-divider v-if="dirs.length && files.length"></v-divider>
       <v-list subheader v-if="files.length">
-        <v-subheader>Files</v-subheader>
+        <v-subheader>Dateien</v-subheader>
         <v-list-item
           v-for="item in files"
           :key="item.path"
@@ -52,7 +52,7 @@
           <v-list-item-content class="py-2">
             <v-list-item-title v-text="item.name"></v-list-item-title>
             <v-list-item-subtitle>{{
-              formatBytes(item.elem.Size._text)
+              formatBytes(item.elem.Size._text) + " - " + formatDateFromString(item.elem.LastModified._text)
             }}</v-list-item-subtitle>
           </v-list-item-content>
 
@@ -104,14 +104,13 @@
 </template>
 
 <script>
-import { formatBytes, getFileEnding } from "./util";
+import { formatBytes, getFileEnding, formatDateFromString } from "./util";
 import Confirm from "./Confirm.vue";
 
 export default {
   props: {
     filestructure: Array,
     icons: Object,
-    storage: String,
     path: String,
     endpoints: Object,
     axios: Function,
@@ -145,6 +144,7 @@ export default {
     },
   },
   methods: {
+    formatDateFromString,
     formatBytes,
     getFileEnding,
     changePath(path) {
@@ -172,10 +172,10 @@ export default {
     },
     async deleteItem(item) {
       let confirmed = await this.$refs.confirm.open(
-        "Delete",
-        `Are you sure<br>you want to delete this ${
-          item.type === "folder" ? "folder" : "file"
-        }?<br><em>${item.basename}</em>`
+        "Löschen",
+        `Soll  ${
+          item.type === "folder" ? "der Ordner" : "die Datei"
+        }<br><em>${item.name}</em><br>wirklich gelöscht werden?`
       );
 
       if (confirmed) {

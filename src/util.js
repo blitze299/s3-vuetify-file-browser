@@ -66,7 +66,34 @@ export function getFileEnding(name) {
   }
 }
 
+export function formatDateFromString(string){
+  return formatDate(new Date(string), true, "FEHLER") + "h"
+}
+
+export function formatDate(date, hours, replacement) {
+  let formatDateNumber = (dateNumber) =>
+    dateNumber < 10 ? "0" + dateNumber : dateNumber;
+
+  try {
+    let d =
+      formatDateNumber(date.getDate()) +
+      "." +
+      formatDateNumber(date.getMonth() + 1) +
+      "." +
+      date.getFullYear();
+    let h =
+      formatDateNumber(date.getHours()) +
+      ":" +
+      formatDateNumber(date.getMinutes());
+
+    return hours ? d + " " + h : d;
+  } catch (e) {
+    return replacement != null ? replacement : "-";
+  }
+}
+
 export default {
   formatBytes,
-  getFileEnding
+  getFileEnding,
+  formatDate
 };
