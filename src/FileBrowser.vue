@@ -1,5 +1,6 @@
 <template>
   <v-card class="mx-auto" :loading="loading > 0">
+      {{path}}
     <toolbar
       :path="path"
       :endpoints="endpoints"
@@ -66,12 +67,12 @@ import Tree from "./Tree.vue";
 import List from "./List.vue";
 import Upload from "./Upload.vue";
 
-import { formatS3ToPathObj } from "./util";
+import { formatS3ToPathObj, removeSlashFromString } from "./util";
 
 const endpoints = {
   list: {
     url:
-      "https://s3.c-dev.io/plesk-backup?prefix=privat&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T085922Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=f87ed1356ddb801263415496d7c8e6693a29cc79f721af4972f8916092cf4f86",
+      "https://s3.c-dev.io/onds-backend?prefix=612dee2150418b25372981f9&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210909%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210909T090556Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6cc6cce086d3b33ec742d36840a106f85d051c0cd514bbd3ee5ea8325b7f61ed",
     method: "get",
   },
   upload: {
@@ -198,7 +199,9 @@ export default {
       this.refreshPending = true;
     },
     pathChanged(path) {
-      this.path = path;
+      this.path = removeSlashFromString(path);
+      //reload data
+      this.loadData();
       this.$emit("change", path);
     },
     deleteItem(item) {

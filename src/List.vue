@@ -52,7 +52,9 @@
           <v-list-item-content class="py-2">
             <v-list-item-title v-text="item.name"></v-list-item-title>
             <v-list-item-subtitle>{{
-              formatBytes(item.elem.Size._text) + " - " + formatDateFromString(item.elem.LastModified._text)
+              formatBytes(item.elem.Size._text) +
+                " - " +
+                formatDateFromString(item.elem.LastModified._text)
             }}</v-list-item-subtitle>
           </v-list-item-content>
 
@@ -104,7 +106,12 @@
 </template>
 
 <script>
-import { formatBytes, getFileEnding, formatDateFromString } from "./util";
+import {
+  formatBytes,
+  getFileEnding,
+  formatDateFromString,
+  filterData,
+} from "./util";
 import Confirm from "./Confirm.vue";
 
 export default {
@@ -134,13 +141,11 @@ export default {
     },
     isDir() {
       return (
-        this.filterData(this.filestructure, "path", this.path).type === "folder"
+        filterData(this.filestructure, "path", this.path).type === "folder"
       );
     },
     isFile() {
-      return (
-        this.filterData(this.filestructure, "path", this.path).type === "file"
-      );
+      return filterData(this.filestructure, "path", this.path).type === "file";
     },
   },
   methods: {
@@ -173,9 +178,9 @@ export default {
     async deleteItem(item) {
       let confirmed = await this.$refs.confirm.open(
         "Löschen",
-        `Soll  ${
-          item.type === "folder" ? "der Ordner" : "die Datei"
-        }<br><em>${item.name}</em><br>wirklich gelöscht werden?`
+        `Soll  ${item.type === "folder" ? "der Ordner" : "die Datei"}<br><em>${
+          item.name
+        }</em><br>wirklich gelöscht werden?`
       );
 
       if (confirmed) {
@@ -187,33 +192,20 @@ export default {
       }
     },
 
-    filterData(object, key, value) {
-      if (Array.isArray(object)) {
-        for (const obj of object) {
-          const result = this.filterData(obj, key, value);
-          if (result) {
-            return result;
-          }
-        }
-      } else {
-        if (object.hasOwnProperty(key) && object[key] === value) {
-          return object;
-        }
-
-        for (const k of Object.keys(object)) {
-          if (typeof object[k] === "object") {
-            const o = this.filterData(object[k], key, value);
-            if (o !== null && typeof o !== "undefined") return o;
-          }
-        }
-        return null;
-      }
-    },
     filterDirsAndFiles(type) {
       if (this.filestructure.length > 0) {
         let filteredDirs = [];
         //return directorys
-        const data = this.filterData(this.filestructure, "path", this.path);
+        //check if leading char is / then remove it
+        /*if (this.path.charAt(0) == "/") {
+          this.path = this.path.substring(1);
+        }
+        //check if last char is / then remove it
+        if (this.path.charAt(this.path.length-1) == "/") {
+          this.path = this.path.substring(0, this.path.length-1);
+        }*/
+        //console.log(filterData(result, "path", path));
+        const data = filterData(this.filestructure, "path", this.path);
         if (data) {
           data.children.forEach((r) => {
             //chef if item is object or directory
@@ -224,12 +216,13 @@ export default {
         }
         return filteredDirs;
       }
-    }
+    },
   },
   watch: {
     async path() {
-      this.items = [];
-      await this.load();
+      /* this.items = [];
+      console.log(this.path)
+      await this.load();*/
     },
     async refreshPending() {
       if (this.refreshPending) {

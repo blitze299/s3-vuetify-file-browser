@@ -12,7 +12,11 @@ export function formatBytes(bytes, decimals = 2) {
 
 export function formatS3ToPathObj(raw) {
   const rawJSON = JSON.parse(convertXmlToJson(raw));
-  const data = rawJSON.ListBucketResult.Contents;
+  let data = rawJSON.ListBucketResult.Contents;
+  //if data is not array (one item) -> make one
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
   const getTree = (data) =>
     data.reduce((tree, path) => {
       path.Key._text.split("/").reduce((t, name, i, a) => {
@@ -66,8 +70,8 @@ export function getFileEnding(name) {
   }
 }
 
-export function formatDateFromString(string){
-  return formatDate(new Date(string), true, "FEHLER") + "h"
+export function formatDateFromString(string) {
+  return formatDate(new Date(string), true, "FEHLER") + "h";
 }
 
 export function formatDate(date, hours, replacement) {
@@ -92,8 +96,46 @@ export function formatDate(date, hours, replacement) {
   }
 }
 
+export function filterData(object, key, value) {
+  if (Array.isArray(object)) {
+    for (const obj of object) {
+      const result = filterData(obj, key, value);
+      if (result) {
+        return result;
+      }
+    }
+  } else {
+    if (object.hasOwnProperty(key) && object[key] === value) {
+      return object;
+    }
+
+    for (const k of Object.keys(object)) {
+      if (typeof object[k] === "object") {
+        const o = filterData(object[k], key, value);
+        if (o !== null && typeof o !== "undefined") return o;
+      }
+    }
+    return null;
+  }
+}
+
+export function removeSlashFromString(string) {
+  //remove leading / when there
+  let formatString = string;
+  if (formatString.charAt(0) === "/") {
+    formatString = formatString.substring(1);
+  }
+  //remove last / when there
+  if (formatString.charAt(formatString.length - 1) === "/") {
+    formatString = formatString.substring(0, formatString.length - 1);
+  }
+  return formatString;
+}
+
 export default {
   formatBytes,
   getFileEnding,
-  formatDate
+  formatDate,
+  filterData,
+  removeSlashFromString,
 };
