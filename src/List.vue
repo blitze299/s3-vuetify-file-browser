@@ -199,11 +199,6 @@ export default {
     },
   },
   watch: {
-    async path() {
-      /* this.items = [];
-      console.log(this.path)
-      await this.load();*/
-    },
     async refreshPending() {
       if (this.refreshPending) {
         await this.load();
