@@ -59,12 +59,14 @@
           </v-list-item-content>
 
           <v-list-item-action>
-            <v-btn icon @click.stop="deleteItem(item)">
-              <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-            </v-btn>
-            <v-btn icon v-if="false">
-              <v-icon color="grey lighten-1">mdi-information</v-icon>
-            </v-btn>
+            <v-row>
+              <v-btn icon @click.stop="deleteItem(item)">
+                <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
+              </v-btn>
+              <v-btn icon @click.stop="downloadItem(item)">
+                <v-icon color="grey lighten-1">mdi-download</v-icon>
+              </v-btn>
+            </v-row>
           </v-list-item-action>
         </v-list-item>
       </v-list>
@@ -86,7 +88,7 @@
       </v-btn>
     </v-toolbar>
     <v-toolbar v-if="path && isDir" dense flat class="shrink">
-      <v-text-field
+      <!--v-text-field
         solo
         flat
         hide-details
@@ -97,7 +99,8 @@
       ></v-text-field>
       <v-btn icon v-if="false">
         <v-icon>mdi-eye-settings-outline</v-icon>
-      </v-btn>
+      </v-btn-->
+      <v-spacer></v-spacer>
       <v-btn icon @click="load">
         <v-icon>mdi-refresh</v-icon>
       </v-btn>
@@ -192,19 +195,13 @@ export default {
       }
     },
 
+    downloadItem(item){
+      console.warn(item)
+    },
+
     filterDirsAndFiles(type) {
       if (this.filestructure.length > 0) {
         let filteredDirs = [];
-        //return directorys
-        //check if leading char is / then remove it
-        /*if (this.path.charAt(0) == "/") {
-          this.path = this.path.substring(1);
-        }
-        //check if last char is / then remove it
-        if (this.path.charAt(this.path.length-1) == "/") {
-          this.path = this.path.substring(0, this.path.length-1);
-        }*/
-        //console.log(filterData(result, "path", path));
         const data = filterData(this.filestructure, "path", this.path);
         if (data) {
           data.children.forEach((r) => {
