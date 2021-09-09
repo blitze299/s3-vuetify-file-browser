@@ -36,6 +36,7 @@
           v-on:loading="loadingChanged"
           v-on:refreshed="refreshPending = false"
           v-on:file-deleted="refreshPending = true"
+          v-on:deleteItem="deleteItem"
         ></list>
       </v-col>
     </v-row>
@@ -75,7 +76,7 @@ const endpoints = {
   },
   upload: {
     url:
-      "https://s3.c-dev.io/plesk-backup/privat/l00000000l123.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T132319Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=fe7e4c43a1d0bd09cd4da2cbb7e0dbd5bdab02b46c272e8dc9267a069fc334ce",
+      "https://s3.c-dev.io/onds-backend?prefix=612dee2150418b25372981f9%2F&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T163430Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bc2bf7e2f864aee1020b7521b15c37ce160e52c49b29a50f4a381e6afef4a32a",
     method: "put",
   },
   mkdir: { url: "/storage/{storage}/mkdir?path={path}", method: "post" },
@@ -158,11 +159,10 @@ export default {
       });
       const result = formatS3ToPathObj(s3data.data);
       this.filestructure = result;
-      console.warn(result);
     },
     loadingChanged(loading) {
       if (loading) {
-        this.loading = 1; 
+        this.loading = 1;
       } else if (this.loading > 0) {
         this.loading = 0;
       }
@@ -200,6 +200,9 @@ export default {
     pathChanged(path) {
       this.path = path;
       this.$emit("change", path);
+    },
+    deleteItem(item) {
+      this.$emit("deleteItem", item);
     },
   },
 };

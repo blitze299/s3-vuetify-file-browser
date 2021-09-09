@@ -102,6 +102,7 @@ export default {
                     segments.length === 1
                         ? "/"
                         : segments[segments.length - 2].path;
+            console.log(path)
             this.changePath(path);
         },
         async addFiles (event) {

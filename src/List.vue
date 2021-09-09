@@ -180,16 +180,8 @@ export default {
 
       if (confirmed) {
         this.$emit("loading", true);
-        let url = this.endpoints.delete.url
-          .replace(new RegExp("{storage}", "g"), this.storage)
-          .replace(new RegExp("{path}", "g"), item.path);
-
-        let config = {
-          url,
-          method: this.endpoints.delete.method || "post",
-        };
-
-        await this.axios.request(config);
+        //emit delete event
+        this.$emit("deleteItem", item);
         this.$emit("file-deleted");
         this.$emit("loading", false);
       }
@@ -230,7 +222,6 @@ export default {
             }
           });
         }
-        console.log(filteredDirs);
         return filteredDirs;
       }
     }
