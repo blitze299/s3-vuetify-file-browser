@@ -12,7 +12,6 @@
         :active="active"
         :items="filestructure"
         :search="filter"
-        :load-children="readFolder"
         v-on:update:active="activeChanged"
         item-key="path"
         item-text="name"
@@ -29,16 +28,6 @@
         </template>
         <template v-slot:label="{ item }">
           {{ item.name }}
-          <v-btn
-            icon
-            v-if="item.type === 'folder'"
-            @click.stop="readFolder(item)"
-            class="ml-1"
-          >
-            <v-icon class="pa-0 mdi-18px" color="grey lighten-1"
-              >mdi-refresh</v-icon
-            >
-          </v-btn>
         </template>
       </v-treeview>
     </div>
@@ -91,29 +80,6 @@ export default {
         this.$emit("path-changed", "");
       }
     },
-    async readFolder(item) {
-      this.$emit("loading", true);
-      let url = this.endpoints.list.url
-        .replace(new RegExp("{storage}", "g"), this.storage)
-        .replace(new RegExp("{path}", "g"), item.path);
-
-      let config = {
-        url,
-        method: this.endpoints.list.method || "get",
-      };
-
-      let response = await this.axios.request(config);
-
-      // eslint-disable-next-line require-atomic-updates
-      item.children = response.data.map((item) => {
-        if (item.type === "folder") {
-          item.children = [];
-        }
-        return item;
-      });
-
-      this.$emit("loading", false);
-    },
     activeChanged(active) {
       this.active = active;
       let path = "";
@@ -153,7 +119,6 @@ export default {
     async refreshPending() {
       if (this.refreshPending) {
         //let item = this.findItem(this.path);
-        //await this.readFolder(item);
         this.$emit("loadData");
         this.$emit("refreshed");
       }

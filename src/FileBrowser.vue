@@ -1,13 +1,13 @@
 <template>
   <v-card class="mx-auto" :loading="loading > 0">
-      {{path}}
     <toolbar
       :path="path"
+      :filestructure="filestructure"
       :endpoints="endpoints"
-      :axios="axiosInstance"
       v-on:path-changed="pathChanged"
       v-on:add-files="addUploadingFiles"
       v-on:folder-created="refreshPending = true"
+      v-on:createFolder="createFolder"
     ></toolbar>
     <v-row no-gutters>
       <v-col v-if="tree && $vuetify.breakpoint.smAndUp" sm="auto">
@@ -206,6 +206,9 @@ export default {
     },
     deleteItem(item) {
       this.$emit("deleteItem", item);
+    },
+    createFolder(item) {
+      this.$emit("createFolder", item);
     },
   },
 };

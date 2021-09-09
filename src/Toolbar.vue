@@ -24,19 +24,20 @@
             <v-icon>mdi-arrow-up-bold-outline</v-icon>
           </v-btn>
         </template>
-        <span v-if="pathSegments.length === 1">Up to "root"</span>
+        <span v-if="pathSegments.length === 1">Nach oben</span>
         <span v-else
-          >Up to "{{ pathSegments[pathSegments.length - 2].name }}"</span
+          >Nach oben "{{ pathSegments[pathSegments.length - 2].name }}"</span
         >
       </v-tooltip>
       <v-menu
+        v-if="path && isFolder(path)"
         v-model="newFolderPopper"
         :close-on-content-click="false"
         :nudge-width="200"
         offset-y
       >
         <template v-slot:activator="{ on }">
-          <v-btn v-if="path" icon v-on="on" title="Create Folder">
+          <v-btn icon v-on="on" title="Create Folder">
             <v-icon>mdi-folder-plus-outline</v-icon>
           </v-btn>
         </template>
@@ -50,19 +51,19 @@
           </v-card-text>
           <v-card-actions>
             <div class="flex-grow-1"></div>
-            <v-btn @click="newFolderPopper = false" depressed>Cancel</v-btn>
+            <v-btn @click="newFolderPopper = false" depressed>zurück</v-btn>
             <v-btn
               color="success"
               :disabled="!newFolderName"
               depressed
               @click="mkdir"
-              >Create Folder</v-btn
+              >Ordner erstellen</v-btn
             >
           </v-card-actions>
         </v-card>
       </v-menu>
       <v-btn
-        v-if="path"
+        v-if="path && isFolder(path)"
         icon
         @click="$refs.inputUpload.click()"
         title="Upload Files"
@@ -81,11 +82,13 @@
 </template>
 
 <script>
+import { filterData } from "./util";
+
 export default {
   props: {
     path: String,
     endpoints: Object,
-    axios: Function,
+    filestructure: Array,
   },
   data() {
     return {
@@ -126,20 +129,15 @@ export default {
     },
     async mkdir() {
       this.$emit("loading", true);
-      let url = this.endpoints.mkdir.url
-        .replace(new RegExp("{storage}", "g"), this.storage)
-        .replace(new RegExp("{path}", "g"), this.path + this.newFolderName);
-
-      let config = {
-        url,
-        method: this.endpoints.mkdir.method || "post",
-      };
-
-      await this.axios.request(config);
+      //create folder
+      this.$emit("createFolder", { name: this.newFolderName, path: this.path });
       this.$emit("folder-created", this.newFolderName);
       this.newFolderPopper = false;
       this.newFolderName = "";
       this.$emit("loading", false);
+    },
+    isFolder(path) {
+      return filterData(this.filestructure, "path", path).type === "folder";
     },
   },
 };
