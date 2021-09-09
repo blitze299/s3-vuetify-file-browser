@@ -159,24 +159,7 @@ export default {
       this.$emit("path-changed", path);
     },
     load() {
-      this.$emit("loading", true);
-      if (this.isDir) {
-        /*let url = this.endpoints.list.url
-          .replace(new RegExp("{storage}", "g"), this.storage)
-          .replace(new RegExp("{path}", "g"), this.path);
-
-        let config = {
-          url,
-          method: this.endpoints.list.method || "get",
-        };
-
-        let response = await this.axios.request(config);
-        this.items = response.data;*/
-        //console.warn(this.path);
-      } else {
-        // TODO: load file
-      }
-      this.$emit("loading", false);
+      this.$emit("loadData");
     },
     async deleteItem(item) {
       let confirmed = await this.$refs.confirm.open(

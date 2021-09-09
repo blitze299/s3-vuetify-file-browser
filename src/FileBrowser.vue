@@ -38,6 +38,7 @@
           v-on:refreshed="refreshPending = false"
           v-on:file-deleted="refreshPending = true"
           v-on:deleteItem="deleteItem"
+          v-on:loadData="loadData"
         ></list>
       </v-col>
     </v-row>
@@ -154,12 +155,14 @@ export default {
   },
   methods: {
     async loadData() {
+      this.loadingChanged(true);
       const s3data = await this.axiosInstance.request({
         url: this.endpoints.list.url,
         method: this.endpoints.list.method,
       });
       const result = formatS3ToPathObj(s3data.data);
       this.filestructure = result;
+      this.loadingChanged(false);
     },
     loadingChanged(loading) {
       if (loading) {
