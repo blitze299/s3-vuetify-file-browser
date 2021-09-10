@@ -145,10 +145,18 @@ export function removeSlashFromString(string) {
   return formatString;
 }
 
+export function removeFirstElementFromPath(path) {
+  const splitString = path.split("/");
+  splitString.shift();
+  const joinString = splitString.join("/");
+  return joinString;
+}
+
 export default {
   formatBytes,
   getFileEnding,
   formatDate,
   filterData,
   removeSlashFromString,
+  removeFirstElementFromPath,
 };

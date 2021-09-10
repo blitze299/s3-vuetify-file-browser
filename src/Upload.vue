@@ -3,7 +3,7 @@
     <v-card flat light min-width="600px" :loading="loading">
       <v-card-text class="py-3 text-center">
         <div>
-          <span class="grey--text">Hochladen nach:</span><br>
+          <span class="grey--text">Hochladen nach:</span><br />
           <v-chip>{{ path }}</v-chip>
         </div>
         <div v-if="maxUploadFilesCount">
@@ -13,7 +13,8 @@
         </div>
         <div v-if="maxUploadFileSize">
           <span class="grey--text"
-            >Maximale Größe pro Datei: {{ formatBytes(maxUploadFileSize) }}</span
+            >Maximale Größe pro Datei:
+            {{ formatBytes(maxUploadFileSize) }}</span
           >
         </div>
       </v-card-text>
@@ -111,7 +112,7 @@
 </template>
 
 <script>
-import { formatBytes } from "./util";
+import { formatBytes, removeFirstElementFromPath } from "./util";
 
 const imageMimeTypes = ["image/png", "image/jpeg"];
 
@@ -186,8 +187,24 @@ export default {
       // files
       for (let file of this.files) {
         formData.append("files", file, file.name);
+        //upload path
+        const formPath = removeFirstElementFromPath(this.path);
+        let upPath = "";
+        if (formPath != "") {
+          //subdirectory
+          upPath = formPath + "/" + file.name;
+        } else {
+          //main directory
+          upPath = file.name;
+        }
+        //get upload url
+        const uploadUrl = await this.axios.request({
+          url: this.endpoint.url + "?path=" + upPath,
+          method: "get",
+        });
+        //use upload url to upload files
         let config = {
-          url: this.endpoint.url,
+          url: uploadUrl.data.url,
           method: this.endpoint.method,
           data: formData,
           onUploadProgress: (progressEvent) => {

@@ -70,17 +70,6 @@ import Upload from "./Upload.vue";
 
 import { formatS3ToPathObj, removeSlashFromString } from "./util";
 
-const endpoints = {
-  list: {
-    url: "null",
-    method: "get",
-  },
-  upload: {
-    url: "null",
-    method: "put",
-  },
-};
-
 const fileIcons = {
   zip: "mdi-folder-zip",
   rar: "mdi-folder-zip",
@@ -120,7 +109,7 @@ export default {
     // file icons set
     icons: { type: Object, default: () => fileIcons },
     // custom backend endpoints
-    endpoints: { type: Object, default: () => endpoints },
+    endpoints: { type: Object },
     // custom axios instance
     axios: { type: Function },
     // custom configuration for internal axios instance
@@ -129,6 +118,7 @@ export default {
     maxUploadFilesCount: { type: Number, default: 10 },
     // max file size to upload. Unlimited by default
     maxUploadFileSize: { type: Number, default: 104857600 },
+    listUrl: { type: String },
   },
   data() {
     return {
@@ -138,6 +128,7 @@ export default {
       uploadingFiles: false, // or an Array of files
       refreshPending: false,
       axiosInstance: null,
+      presetEndpoints: {},
     };
   },
   created() {
@@ -147,14 +138,20 @@ export default {
     if (!this.path && !(this.tree && this.$vuetify.breakpoint.smAndUp)) {
       this.pathChanged("/");
     }
+    //console.warn(this.endpoints.list.url);
     this.loadData();
   },
   methods: {
     async loadData() {
-      console.warn(this.endpoints.list.url)
       this.loadingChanged(true);
-      const s3data = await this.axiosInstance.request({
+      //get s3url from backend
+      const s3url = await this.axiosInstance.request({
         url: this.endpoints.list.url,
+        method: this.endpoints.list.method,
+      });
+      //query s3 data with url from backend
+      const s3data = await this.axiosInstance.request({
+        url: s3url.data.url,
         method: this.endpoints.list.method,
       });
       const result = formatS3ToPathObj(s3data.data);
@@ -209,6 +206,9 @@ export default {
     },
     createFolder(item) {
       this.$emit("createFolder", item);
+    },
+    setUrl(url) {
+      console.error(url);
     },
   },
 };
