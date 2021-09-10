@@ -1,5 +1,5 @@
 <template>
-  <v-card flat tile min-height="380" class="d-flex flex-column">
+  <v-card flat tile height="75vh" class="d-flex flex-column">
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"

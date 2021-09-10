@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto" :loading="loading > 0">
+  <v-card :loading="loading > 0">
     <toolbar
       :path="path"
       :filestructure="filestructure"
@@ -72,17 +72,13 @@ import { formatS3ToPathObj, removeSlashFromString } from "./util";
 
 const endpoints = {
   list: {
-    url:
-      "https://s3.c-dev.io/onds-backend?prefix=612dee2150418b25372981f9&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210909%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210909T090556Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=6cc6cce086d3b33ec742d36840a106f85d051c0cd514bbd3ee5ea8325b7f61ed",
+    url: "null",
     method: "get",
   },
   upload: {
-    url:
-      "https://s3.c-dev.io/onds-backend?prefix=612dee2150418b25372981f9%2F&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210908%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210908T163430Z&X-Amz-Expires=86400&X-Amz-SignedHeaders=host&X-Amz-Signature=bc2bf7e2f864aee1020b7521b15c37ce160e52c49b29a50f4a381e6afef4a32a",
+    url: "null",
     method: "put",
   },
-  mkdir: { url: "/storage/{storage}/mkdir?path={path}", method: "post" },
-  delete: { url: "/storage/{storage}/delete?path={path}", method: "post" },
 };
 
 const fileIcons = {
@@ -155,6 +151,7 @@ export default {
   },
   methods: {
     async loadData() {
+      console.warn(this.endpoints.list.url)
       this.loadingChanged(true);
       const s3data = await this.axiosInstance.request({
         url: this.endpoints.list.url,

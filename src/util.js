@@ -13,6 +13,17 @@ export function formatBytes(bytes, decimals = 2) {
 export function formatS3ToPathObj(raw) {
   const rawJSON = JSON.parse(convertXmlToJson(raw));
   let data = rawJSON.ListBucketResult.Contents;
+  //check if bucket is empty then build first empty object manuak
+  if (!rawJSON.ListBucketResult.Contents) {
+    return [
+      {
+        children: [],
+        name: removeSlashFromString(rawJSON.ListBucketResult.Prefix._text),
+        path: removeSlashFromString(rawJSON.ListBucketResult.Prefix._text),
+        type: "folder",
+      },
+    ];
+  }
   //if data is not array (one item) -> make one
   if (!Array.isArray(data)) {
     data = [data];
@@ -52,7 +63,6 @@ export function formatS3ToPathObj(raw) {
       }, tree);
       return tree;
     }, []);
-
   return getTree(data);
 }
 
@@ -105,7 +115,10 @@ export function filterData(object, key, value) {
       }
     }
   } else {
-    if (object.hasOwnProperty(key) && object[key] === value) {
+    if (
+      Object.prototype.hasOwnProperty.call(object, key) &&
+      object[key] === value
+    ) {
       return object;
     }
 

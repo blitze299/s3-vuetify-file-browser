@@ -2,8 +2,8 @@
   <v-card
     flat
     tile
-    width="250"
-    min-height="380"
+    width="300"
+    height="75vh"
     class="d-flex flex-column folders-tree-card"
   >
     <div class="grow scroll-x">
