@@ -7,7 +7,6 @@
       v-on:path-changed="pathChanged"
       v-on:add-files="addUploadingFiles"
       v-on:folder-created="refreshPending = true"
-      v-on:createFolder="createFolder"
     ></toolbar>
     <v-row no-gutters>
       <v-col v-if="tree && $vuetify.breakpoint.smAndUp" sm="auto">
@@ -81,6 +80,7 @@ const fileIcons = {
   pdf: "mdi-file-pdf",
   png: "mdi-file-image",
   jpg: "mdi-file-image",
+  JPG: "mdi-file-image",
   jpeg: "mdi-file-image",
   mp4: "mdi-filmstrip",
   mkv: "mdi-filmstrip",
@@ -203,9 +203,6 @@ export default {
     },
     deleteItem(item) {
       this.$emit("deleteItem", item);
-    },
-    createFolder(item) {
-      this.$emit("createFolder", item);
     },
     setUrl(url) {
       console.error(url);

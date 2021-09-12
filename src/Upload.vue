@@ -186,6 +186,7 @@ export default {
       this.uploading = true;
       // files
       for (let file of this.files) {
+        console.log(JSON.stringify(file))
         formData.append("files", file, file.name);
         //upload path
         const formPath = removeFirstElementFromPath(this.path);

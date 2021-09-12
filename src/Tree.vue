@@ -3,8 +3,7 @@
     flat
     tile
     width="300"
-    height="75vh"
-    class="d-flex flex-column folders-tree-card"
+    class="d-flex flex-column folders-tree-card scroll-y"
   >
     <div class="grow scroll-x">
       <v-treeview
@@ -131,8 +130,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.scroll-y {
+    overflow-y: scroll;
+  }
+
 .folders-tree-card {
-  height: 100%;
+  height: 70vh;
 
   .scroll-x {
     overflow-x: auto;

@@ -1,5 +1,5 @@
 <template>
-  <v-card flat tile height="75vh" class="d-flex flex-column">
+  <v-card flat tile height="70vh" class="d-flex flex-column scroll-x">
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"
@@ -213,4 +213,8 @@ export default {
 .v-card {
   height: 100%;
 }
+
+.scroll-x {
+    overflow-x: scroll;
+  }
 </style>
