@@ -4,6 +4,7 @@
       :path="path"
       :filestructure="filestructure"
       :endpoints="endpoints"
+      :axios="axiosInstance"
       v-on:path-changed="pathChanged"
       v-on:add-files="addUploadingFiles"
       v-on:folder-created="refreshPending = true"

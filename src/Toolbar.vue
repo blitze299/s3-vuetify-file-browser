@@ -57,7 +57,7 @@
               color="success"
               :disabled="!newFolderName"
               depressed
-              @click="mkdir"
+              @click="mkdir(newFolderName)"
               >Ordner erstellen</v-btn
             >
           </v-card-actions>
@@ -83,13 +83,14 @@
 </template>
 
 <script>
-import { filterData } from "./util";
+import { filterData, removeFirstElementFromPath } from "./util";
 
 export default {
   props: {
     path: String,
     endpoints: Object,
     filestructure: Array,
+    axios: Function,
   },
   data() {
     return {
@@ -128,8 +129,26 @@ export default {
       this.$emit("add-files", event.target.files);
       this.$refs.inputUpload.value = "";
     },
-    async mkdir() {
+    async mkdir(name) {
       this.$emit("loading", true);
+      //create folder placeholder file blob
+      const blob = new Blob([], {
+        type: "text/plain",
+      });
+      const formPath = removeFirstElementFromPath(this.path);
+      const upPath = formPath + name + "/placeholder";
+      //get upload url
+      const uploadUrl = await this.axios.request({
+        url: this.endpoints.upload.url + "?path=" + upPath,
+        method: "get",
+      });
+      //use upload url to upload files
+      let config = {
+        url: uploadUrl.data.url,
+        method: this.endpoints.upload.method,
+        data: blob,
+      };
+      await this.axios.request(config);
       this.$emit("folder-created", this.newFolderName);
       this.newFolderPopper = false;
       this.newFolderName = "";

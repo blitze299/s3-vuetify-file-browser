@@ -25,7 +25,7 @@
           ) === 'pdf'
         "
       -->
-      <div v-if="false">
+      <div v-if="true">
         <pdf
           :resize="true"
           scale.sync="page-width"
@@ -41,7 +41,7 @@
         <v-card-text class="grow d-flex justify-center align-center"
           >Leider ist eine Vorschau für diese Datei nicht verfügbar</v-card-text
         >
-        
+
       </div>
     </div>
     <v-card-text v-else-if="dirs.length || files.length" class="grow">
