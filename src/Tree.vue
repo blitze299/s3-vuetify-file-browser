@@ -26,7 +26,13 @@
           <v-icon v-else>{{ icons[getFileEnding(item.name)] }}</v-icon>
         </template>
         <template v-slot:label="{ item }">
-          {{ item.name }}
+          <div v-if="item.path.split('/').length === 1">
+          <!-- mask user id -->
+            Dateien
+          </div>
+          <div v-else>
+            {{item.name}}
+          </div>
         </template>
       </v-treeview>
     </div>

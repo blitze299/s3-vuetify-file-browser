@@ -11,7 +11,8 @@
           :input-value="index === pathSegments.length - 1"
           :key="index + '-btn'"
           @click="changePath(segment.path)"
-          >{{ segment.name }}</v-btn
+          ><div v-if="index != 0">{{ segment.name }}</div>
+          <div v-else>Dateien</div></v-btn
         >
       </template>
     </v-toolbar-items>
@@ -129,38 +130,6 @@ export default {
     },
     async mkdir() {
       this.$emit("loading", true);
-      //create folder
-      //this.$emit("createFolder", { name: this.newFolderName, path: this.path });
-      //upload
-      //let formData = new FormData();
-
-      /*formData.append("files", file, file.name);
-      //upload path
-      const formPath = removeFirstElementFromPath(this.path);
-      let upPath = "";
-      if (formPath != "") {
-        //subdirectory
-        upPath = formPath + "/" + file.name;
-      } else {
-        //main directory
-        upPath = file.name;
-      }
-      //get upload url
-      const uploadUrl = await this.axios.request({
-        url: this.endpoint.url + "?path=" + upPath,
-        method: "get",
-      });
-      //use upload url to upload files
-      let config = {
-        url: uploadUrl.data.url,
-        method: this.endpoint.method,
-        data: formData,
-        onUploadProgress: (progressEvent) => {
-          this.progress = (progressEvent.loaded / progressEvent.total) * 100;
-        },
-      };
-      await this.axios.request(config);*/
-
       this.$emit("folder-created", this.newFolderName);
       this.newFolderPopper = false;
       this.newFolderName = "";

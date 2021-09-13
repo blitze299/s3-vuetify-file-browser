@@ -33,20 +33,32 @@ export function formatS3ToPathObj(raw) {
       path.Key._text.split("/").reduce((t, name, i, a) => {
         let temp = t.find((q) => q.name === name);
         // test if item = is the last one of the last path array items then it is a file
-        if (
-          name ===
-          path.Key._text.split("/")[path.Key._text.split("/").length - 1]
-        ) {
+        const nameSplit = path.Key._text.split("/")[
+          path.Key._text.split("/").length - 1
+        ];
+        if (name === nameSplit) {
           //file
           if (!temp)
-            t.push(
-              (temp = {
+            if (nameSplit != "placeholder") {
+              //check if item is placeholder
+              //is not placeholder
+              t.push(
+                (temp = {
+                  name,
+                  path: a.slice(0, i + 1).join("/"),
+                  elem: path,
+                  type: "file",
+                })
+              );
+            } else {
+              //do not push placeholder so they are not displayed
+              temp = {
                 name,
                 path: a.slice(0, i + 1).join("/"),
                 elem: path,
-                type: "file",
-              })
-            );
+                type: "placeholder",
+              };
+            }
         } else {
           // no file -> path
           if (!temp)
