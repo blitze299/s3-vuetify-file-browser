@@ -131,8 +131,8 @@ export default {
 
 <style lang="scss" scoped>
 .scroll-y {
-    overflow-y: scroll;
-  }
+  overflow-y: auto;
+}
 
 .folders-tree-card {
   height: 70vh;

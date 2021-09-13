@@ -215,6 +215,6 @@ export default {
 }
 
 .scroll-x {
-    overflow-x: scroll;
+    overflow-x: auto;
   }
 </style>
