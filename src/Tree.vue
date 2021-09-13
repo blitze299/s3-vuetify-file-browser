@@ -18,6 +18,7 @@
         activatable
         transition
         class="folders-tree"
+        open-all
       >
         <template v-slot:prepend="{ item, open }">
           <v-icon v-if="item.type === 'folder'">{{
@@ -27,11 +28,11 @@
         </template>
         <template v-slot:label="{ item }">
           <div v-if="item.path.split('/').length === 1">
-          <!-- mask user id -->
+            <!-- mask user id -->
             Dateien
           </div>
           <div v-else>
-            {{item.name}}
+            {{ item.name }}
           </div>
         </template>
       </v-treeview>
@@ -131,7 +132,7 @@ export default {
   },
   created() {
     this.init();
-  },
+  }
 };
 </script>
 

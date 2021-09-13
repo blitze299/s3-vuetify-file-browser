@@ -1,16 +1,49 @@
 <template>
-  <v-card flat tile height="70vh" class="d-flex flex-column scroll-x">
+  <v-card
+    flat
+    tile
+    height="70vh"
+    width="100%"
+    class="d-flex flex-column scroll-x"
+  >
     <confirm ref="confirm"></confirm>
     <v-card-text
       v-if="!path"
       class="grow d-flex justify-center align-center grey--text"
       >Wähle einen Ordner oder eine Datei aus</v-card-text
     >
-    <v-card-text
+    <!--v-card-text
       v-else-if="isFile"
       class="grow d-flex justify-center align-center"
       >Datei: {{ path }}</v-card-text
-    >
+    -->
+    <div v-else-if="isFile">
+      <!--div
+        v-if="
+          getFileEndingUrl(
+            'https://s3.c-dev.io/onds-backend/60f733989daefaddd9cc788c/PDF-Eingangsmitteilung-210952010233.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210913%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210913T114854Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d8a55b9dc62bd89aa048adfef7f46d910a7fd866b04574686c981acc57c3df84'
+          ) === 'pdf'
+        "
+      -->
+      <div v-if="false">
+        <pdf
+          :resize="true"
+          scale.sync="page-width"
+          src="https://s3.c-dev.io/onds-backend/60f733989daefaddd9cc788c/PDF-Eingangsmitteilung-210952010233.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210913%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210913T114854Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d8a55b9dc62bd89aa048adfef7f46d910a7fd866b04574686c981acc57c3df84"
+          :page="1"
+        >
+          <template slot="loading">
+            Datei wird geladen...
+          </template>
+        </pdf>
+      </div>
+      <div v-else>
+        <v-card-text class="grow d-flex justify-center align-center"
+          >Leider ist eine Vorschau für diese Datei nicht verfügbar</v-card-text
+        >
+        
+      </div>
+    </div>
     <v-card-text v-else-if="dirs.length || files.length" class="grow">
       <v-list subheader v-if="dirs.length">
         <v-subheader>Ordner</v-subheader>
@@ -114,8 +147,11 @@ import {
   getFileEnding,
   formatDateFromString,
   filterData,
+  removeFirstElementFromPath,
 } from "./util";
 import Confirm from "./Confirm.vue";
+
+import pdf from "pdfvuer";
 
 export default {
   props: {
@@ -128,6 +164,7 @@ export default {
   },
   components: {
     Confirm,
+    pdf,
   },
   data() {
     return {
@@ -178,8 +215,27 @@ export default {
       }
     },
 
-    downloadItem(item){
-      console.warn(item)
+    getFileEndingUrl(string) {
+      const splitStringDot = string.split(".");
+      const ndSplit = splitStringDot[splitStringDot.length - 1].split("?");
+      return ndSplit[0];
+    },
+
+    async downloadItem(item) {
+      console.warn(item);
+      //upload path
+      const formPath = removeFirstElementFromPath(item.path);
+      console.error(formPath);
+      //get download url
+      const downloadUrl = await this.axios.request({
+        url: this.endpoints.upload.url + "?path=" + formPath,
+        method: "get",
+      });
+      console.warn(downloadUrl.data.url);
+      const newURL =
+        "https://s3.c-dev.io/onds-backend/60f733989daefaddd9cc788c/PDF-Eingangsmitteilung-210952010233.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s3user853ziugfdsf%2F20210913%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210913T114854Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=d8a55b9dc62bd89aa048adfef7f46d910a7fd866b04574686c981acc57c3df84";
+      //open url to download file
+      window.open(newURL, "_blank");
     },
 
     filterDirsAndFiles(type) {
@@ -215,6 +271,6 @@ export default {
 }
 
 .scroll-x {
-    overflow-x: auto;
-  }
+  overflow-x: auto;
+}
 </style>

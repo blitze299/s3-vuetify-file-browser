@@ -18,13 +18,10 @@
   ],
   "author": "Yurii Semeniuk",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/semeniuk/vuetify-file-browser/issues"
-  },
-  "homepage": "https://github.com/semeniuk/vuetify-file-browser#readme",
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
     "axios": "^0.19.0",
+    "pdfvuer": "^1.9.2",
     "vue": "^2.6.10",
     "xml-js": "^1.6.11"
   },
