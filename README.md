@@ -1,54 +1,61 @@
-# Vuetify File Browser
+# S3 Vuetify File Browser
 
 Open source file manager component for Vue.js. Requires Vuetify v2.0 or higher.
 
-![Screenshot](https://user-images.githubusercontent.com/15949274/65264191-c6a55c00-db16-11e9-841a-81e3906e5ca7.PNG)
+This version uses S3 [presigned URLs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.html) to list, get, upload data an create folders.
 
+All presigned URLs must be signed by a server with secure access to S3, they are then fetched from the endpoints.
+
+Forked from: [here](https://github.com/semeniuk/vuetify-file-browser)
 
 ## Usage
 
 ```
+
 npm i vuetify-file-browser
+
 ```
 
 ```html
 <template>
-    <file-browser :axiosConfig="{baseURL: 'http://localhost:8081'}" />
+  <file-browser :endpoints="endpoints" />
 </template>
 
 <script>
-import FileBrowser from "vuetify-file-browser";
+  import FileBrowser from "vuetify-file-browser";
 
-export default {
+  export default {
+    data: () => ({
+      endpoints: {
+        list: {
+          url: "document/url",
+
+          method: "get",
+        },
+
+        upload: {
+          url: "document/uploadurl",
+
+          method: "put",
+        },
+
+        download: {
+          url: "document/downloadurl",
+
+          method: "get",
+        },
+
+        download: {
+          url: "document/deleteurl",
+
+          method: "delete",
+        },
+      },
+    }),
+
     components: {
-        FileBrowser
-    }
-};
+      FileBrowser,
+    },
+  };
 </script>
-```
-
-## Props
-
-```js
-// comma-separated list of active storage codes
-storages: {
-    type: String,
-    default: () => availableStorages.map(item => item.code).join(",")
-},
-// code of default storage
-storage: { type: String, default: "local" },
-// show tree view
-tree: { type: Boolean, default: true },
-// file icons set
-icons: { type: Object, default: () => fileIcons },
-// custom backend endpoints
-endpoints: { type: Object, default: () => endpoints },
-// custom axios instance
-axios: { type: Function },
-// custom configuration for internal axios instance
-axiosConfig: { type: Object, default: () => {} },
-// max files count to upload at once. Unlimited by default
-maxUploadFilesCount: { type: Number, default: 0 },
-// max file size to upload. Unlimited by default
-maxUploadFileSize: { type: Number, default: 0 }
 ```

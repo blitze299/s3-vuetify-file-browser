@@ -1,22 +1,23 @@
 {
-  "name": "vuetify-file-browser",
-  "version": "1.0.2",
-  "description": "Open source file manager component for Vue.js. Requires Vuetify v2.0 or higher",
+  "name": "s3-vuetify-file-browser",
+  "version": "1.0.1",
+  "description": "Open source file manager component for Vue.js using S3 presigned URLs. Requires Vuetify v2.0 or higher",
   "main": "src/index.js",
   "scripts": {
     "build": "webpack --mode production"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/semeniuk/vuetify-file-browser.git"
+    "url": "git+https://github.com/blitze299/vuetify-file-browser.git"
   },
   "keywords": [
     "File",
     "Browser",
     "Vuetify",
-    "Vue"
+    "Vue",
+    "S3"
   ],
-  "author": "Yurii Semeniuk",
+  "author": "Moritz Beck",
   "license": "MIT",
   "dependencies": {
     "@babel/polyfill": "^7.6.0",
