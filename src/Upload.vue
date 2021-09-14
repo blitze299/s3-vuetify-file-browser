@@ -200,19 +200,18 @@ export default {
           url: this.endpoint.url + "?path=" + upPath,
           method: "get",
         });
-        //create form data
-        let formData = new FormData();
-        formData.append("file", file, file.name);
-        //use upload url to upload files
         let config = {
           url: uploadUrl.data.url,
           method: this.endpoint.method,
-          data: formData,
+          data: file,
+          headers: {
+            "Content-Type": file.type,
+          },
           onUploadProgress: (progressEvent) => {
             this.progress = (progressEvent.loaded / progressEvent.total) * 100;
           },
         };
-        console.warn(config)
+        console.warn(config);
         await this.axios.request(config);
       }
 
