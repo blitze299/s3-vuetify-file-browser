@@ -12,7 +12,7 @@ Forked from: [here](https://github.com/semeniuk/vuetify-file-browser)
 
 ```
 
-npm i vuetify-file-browser
+npm i s3-vuetify-file-browser
 
 ```
 
@@ -22,7 +22,7 @@ npm i vuetify-file-browser
 </template>
 
 <script>
-  import FileBrowser from "vuetify-file-browser";
+  import FileBrowser from "s3-vuetify-file-browser";
 
   export default {
     data: () => ({
