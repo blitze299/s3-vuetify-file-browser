@@ -159,14 +159,6 @@ export default {
       return filterData(this.filestructure, "path", this.path).type === "file";
     },
   },
-  async updated() {
-    console.warn(this.path.split("/").length > 1);
-    console.warn(this.isFile);
-    if (this.path.split("/").length > 1 && this.isFile) {
-      //load file
-      this.downloadPath = await this.getDownloadItemFromPath(this.path);
-    }
-  },
   methods: {
     formatDateFromString,
     formatBytes,
@@ -204,13 +196,7 @@ export default {
       //open url to download file
       window.open(await this.getDownloadItemLink(item), "_blank");
     },
-
-    async getDownloadItemFromPath(path) {
-      const item = filterData(this.filestructure, "path", path);
-      const link = await this.getDownloadItemLink(item);
-      return link;
-    },
-
+ 
     async getDownloadItemLink(item) {
       //upload path
       const formPath = removeFirstElementFromPath(item.path);

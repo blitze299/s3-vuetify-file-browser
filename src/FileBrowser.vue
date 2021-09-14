@@ -133,7 +133,6 @@ export default {
     };
   },
   created() {
-    console.log(this.axiosConfig);
     this.axiosInstance = this.axios || axios.create(this.axiosConfig);
   },
   mounted() {
@@ -205,10 +204,7 @@ export default {
     },
     deleteItem(item) {
       this.$emit("deleteItem", item);
-    },
-    setUrl(url) {
-      console.error(url);
-    },
+    }
   },
 };
 </script>

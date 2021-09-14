@@ -182,13 +182,9 @@ export default {
     },
 
     async upload() {
-      //let formData = new FormData();
       this.uploading = true;
       // files
       for (let file of this.files) {
-        console.log(file)
-        console.log(file.name)
-        //formData.append("files", file, file.name);
         //upload path
         const formPath = removeFirstElementFromPath(this.path);
         let upPath = "";
@@ -204,16 +200,19 @@ export default {
           url: this.endpoint.url + "?path=" + upPath,
           method: "get",
         });
-        console.log(file);
+        //create form data
+        let formData = new FormData();
+        formData.append("file", file, file.name);
         //use upload url to upload files
         let config = {
           url: uploadUrl.data.url,
           method: this.endpoint.method,
-          data: file,
+          data: formData,
           onUploadProgress: (progressEvent) => {
             this.progress = (progressEvent.loaded / progressEvent.total) * 100;
           },
         };
+        console.warn(config)
         await this.axios.request(config);
       }
 
