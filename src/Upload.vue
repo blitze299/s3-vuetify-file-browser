@@ -211,7 +211,6 @@ export default {
             this.progress = (progressEvent.loaded / progressEvent.total) * 100;
           },
         };
-        console.warn(config);
         await this.axios.request(config);
       }
 

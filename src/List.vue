@@ -7,6 +7,21 @@
     class="d-flex flex-column scroll-x"
   >
     <confirm ref="confirm"></confirm>
+    <share ref="share"></share>
+    <v-snackbar v-model="shareSnackbar.open" :timeout="4000">
+      {{ shareSnackbar.text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="secondary"
+          text
+          v-bind="attrs"
+          @click="copyToClipboard(shareSnackbar.link)"
+        >
+          Link kopieren
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-card-text
       v-if="!path"
       class="grow d-flex justify-center align-center grey--text"
@@ -18,7 +33,7 @@
     >
       <h4>Datei: {{ path }}</h4>
       <v-btn class="ml-1" icon @click.stop="getFileFromPath(path)">
-        <v-icon color="grey lighten-1">mdi-download</v-icon>
+        <v-icon color="grey darken-1">mdi-download</v-icon>
       </v-btn>
     </v-card-text>
     <v-card-text v-else-if="dirs.length || files.length" class="grow">
@@ -37,11 +52,12 @@
             <v-list-item-title v-text="item.name"></v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
-            <v-btn icon @click.stop="deleteItem(item)">
-              <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
-            </v-btn>
-            <v-btn icon v-if="false">
-              <v-icon color="grey lighten-1">mdi-information</v-icon>
+            <v-btn
+              icon
+              :disabled="item.children.length > 0"
+              @click.stop="deleteItem(item)"
+            >
+              <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
             </v-btn>
           </v-list-item-action>
         </v-list-item>
@@ -71,10 +87,13 @@
           <v-list-item-action>
             <v-row>
               <v-btn icon @click.stop="deleteItem(item)">
-                <v-icon color="grey lighten-1">mdi-delete-outline</v-icon>
+                <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
+              </v-btn>
+              <v-btn icon @click.stop="shareItem(item)">
+                <v-icon color="grey darken-1">mdi-share-variant-outline</v-icon>
               </v-btn>
               <v-btn icon @click.stop="downloadItem(item)">
-                <v-icon color="grey lighten-1">mdi-download</v-icon>
+                <v-icon color="grey darken-1">mdi-download</v-icon>
               </v-btn>
             </v-row>
           </v-list-item-action>
@@ -127,6 +146,7 @@ import {
   removeFirstElementFromPath,
 } from "./util";
 import Confirm from "./Confirm.vue";
+import Share from "./Share.vue";
 
 export default {
   props: {
@@ -139,12 +159,18 @@ export default {
   },
   components: {
     Confirm,
+    Share,
   },
   data() {
     return {
       items: [],
       filter: "",
       downloadPath: "",
+      shareSnackbar: {
+        open: false,
+        text: "",
+        link: "",
+      },
     };
   },
   computed: {
@@ -173,6 +199,44 @@ export default {
     load() {
       this.$emit("loadData");
     },
+
+    async shareItem(item) {
+      let shared = await this.$refs.share.open(
+        "Teilen",
+        `Die Datei<br><em>${item.name}</em><br>wird geteilt und der Link in die Zwischenablage kopiert.<br>Der Link is <em>24 Stunden</em> gültig`
+      );
+
+      if (shared) {
+        this.$emit("loading", true);
+        //emit delete event
+        //const formPath = removeFirstElementFromPath(item.path);
+        /*await this.axios.request({
+            url: this.endpoints.delete.url + "?path=" + formPath,
+            method: this.endpoints.delete.method,
+          });*/
+        //upload path
+        const formPath = removeFirstElementFromPath(item.path);
+        //get download url
+        const downloadUrl = await this.axios.request({
+          url:
+            this.endpoints.download.url + "?path=" + formPath + "&lifetime=24",
+          method: "get",
+        });
+        //copy url to clipboard
+        this.copyToClipboard(downloadUrl.data.url);
+        this.shareSnackbar = {
+          open: true,
+          text: "Link erfolgreich in die Zwischenablage kopiert",
+          link: downloadUrl.data.url,
+        };
+        this.$emit("loading", false);
+      }
+    },
+
+    copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+    },
+
     async deleteItem(item) {
       let confirmed = await this.$refs.confirm.open(
         "Löschen",
@@ -184,7 +248,19 @@ export default {
       if (confirmed) {
         this.$emit("loading", true);
         //emit delete event
-        this.$emit("deleteItem", item);
+        const formPath = removeFirstElementFromPath(item.path);
+        if (item.type === "file") {
+          await this.axios.request({
+            url: this.endpoints.delete.url + "?path=" + formPath,
+            method: this.endpoints.delete.method,
+          });
+        } else if (item.type === "folder") {
+          await this.axios.request({
+            url:
+              this.endpoints.delete.url + "?path=" + formPath + "/placeholder",
+            method: this.endpoints.delete.method,
+          });
+        }
         this.$emit("file-deleted");
         this.$emit("loading", false);
       }
@@ -208,7 +284,7 @@ export default {
     },
 
     async getDownloadItemLink(item) {
-      //upload path
+      //download path
       const formPath = removeFirstElementFromPath(item.path);
       //get download url
       const downloadUrl = await this.axios.request({

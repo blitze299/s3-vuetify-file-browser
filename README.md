@@ -46,7 +46,7 @@ npm i vuetify-file-browser
         },
 
         download: {
-          url: "document/deleteurl",
+          url: "document",
 
           method: "delete",
         },

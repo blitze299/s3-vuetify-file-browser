@@ -37,7 +37,6 @@
           v-on:loading="loadingChanged"
           v-on:refreshed="refreshPending = false"
           v-on:file-deleted="refreshPending = true"
-          v-on:deleteItem="deleteItem"
           v-on:loadData="loadData"
         ></list>
       </v-col>
@@ -202,9 +201,6 @@ export default {
       //reload data
       this.loadData();
       this.$emit("change", path);
-    },
-    deleteItem(item) {
-      this.$emit("deleteItem", item);
     }
   },
 };
