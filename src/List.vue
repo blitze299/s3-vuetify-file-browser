@@ -195,10 +195,12 @@ export default {
       //upload path
       const formPath = removeFirstElementFromPath(item.path);
       //get download url
+      console.warn(formPath)
       const downloadUrl = await this.axios.request({
         url: this.endpoints.download.url + "?path=" + formPath,
         method: "get",
       });
+      console.log(downloadUrl.data.url)
       //open url to download file
       window.open(downloadUrl.data.url, "_blank");
     },
