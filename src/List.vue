@@ -15,8 +15,12 @@
     <v-card-text
       v-else-if="isFile"
       class="grow d-flex justify-center align-center"
-      >Datei: {{ path }}</v-card-text
     >
+      <h4>Datei: {{ path }}</h4>
+      <v-btn class="ml-1" icon @click.stop="getFileFromPath(path)">
+        <v-icon color="grey lighten-1">mdi-download</v-icon>
+      </v-btn>
+    </v-card-text>
     <v-card-text v-else-if="dirs.length || files.length" class="grow">
       <v-list subheader v-if="dirs.length">
         <v-subheader>Ordner</v-subheader>
@@ -134,7 +138,7 @@ export default {
     refreshPending: Boolean,
   },
   components: {
-    Confirm
+    Confirm,
   },
   data() {
     return {
@@ -192,11 +196,17 @@ export default {
       return ndSplit[0];
     },
 
+    getFileFromPath(path) {
+      //get item from path
+      const item = filterData(this.filestructure, "path", path);
+      this.downloadItem(item);
+    },
+
     async downloadItem(item) {
       //open url to download file
       window.open(await this.getDownloadItemLink(item), "_blank");
     },
- 
+
     async getDownloadItemLink(item) {
       //upload path
       const formPath = removeFirstElementFromPath(item.path);

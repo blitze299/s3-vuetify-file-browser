@@ -90,6 +90,7 @@ const fileIcons = {
   mov: "mdi-filmstrip",
   txt: "mdi-file-document",
   xls: "mdi-file-excel",
+  xlsx: "mdi-file-excel",
   other: "mdi-file-outline",
 };
 
