@@ -133,6 +133,7 @@ export default {
     };
   },
   created() {
+    console.log(this.axiosConfig);
     this.axiosInstance = this.axios || axios.create(this.axiosConfig);
   },
   mounted() {

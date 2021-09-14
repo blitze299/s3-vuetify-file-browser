@@ -140,6 +140,7 @@ export default {
     return {
       items: [],
       filter: "",
+      downloadPath: "",
     };
   },
   computed: {
@@ -157,6 +158,14 @@ export default {
     isFile() {
       return filterData(this.filestructure, "path", this.path).type === "file";
     },
+  },
+  async updated() {
+    console.warn(this.path.split("/").length > 1);
+    console.warn(this.isFile);
+    if (this.path.split("/").length > 1 && this.isFile) {
+      //load file
+      this.downloadPath = await this.getDownloadItemFromPath(this.path);
+    }
   },
   methods: {
     formatDateFromString,
@@ -192,17 +201,25 @@ export default {
     },
 
     async downloadItem(item) {
+      //open url to download file
+      window.open(await this.getDownloadItemLink(item), "_blank");
+    },
+
+    async getDownloadItemFromPath(path) {
+      const item = filterData(this.filestructure, "path", path);
+      const link = await this.getDownloadItemLink(item);
+      return link;
+    },
+
+    async getDownloadItemLink(item) {
       //upload path
       const formPath = removeFirstElementFromPath(item.path);
       //get download url
-      console.warn(formPath)
       const downloadUrl = await this.axios.request({
         url: this.endpoints.download.url + "?path=" + formPath,
         method: "get",
       });
-      console.log(downloadUrl.data.url)
-      //open url to download file
-      window.open(downloadUrl.data.url, "_blank");
+      return downloadUrl.data.url;
     },
 
     filterDirsAndFiles(type) {
