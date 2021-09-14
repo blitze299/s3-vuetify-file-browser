@@ -54,7 +54,7 @@
             <div class="flex-grow-1"></div>
             <v-btn @click="newFolderPopper = false" depressed>zurück</v-btn>
             <v-btn
-              color="success"
+              color="secondary"
               :disabled="!newFolderName"
               depressed
               @click="mkdir(newFolderName)"
