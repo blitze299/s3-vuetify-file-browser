@@ -25,9 +25,9 @@
             <v-icon>mdi-arrow-up-bold-outline</v-icon>
           </v-btn>
         </template>
-        <span v-if="pathSegments.length === 1">Nach oben</span>
-        <span v-else
-          >Nach oben "{{ pathSegments[pathSegments.length - 2].name }}"</span
+        <span v-if="pathSegments.length <= 2">Nach oben</span>
+        <span v-else>
+          Nach oben "{{ pathSegments[pathSegments.length - 2].name }}"</span
         >
       </v-tooltip>
       <v-menu
@@ -63,21 +63,27 @@
           </v-card-actions>
         </v-card>
       </v-menu>
-      <v-btn
-        v-if="path && isFolder(path)"
-        icon
-        @click="$refs.inputUpload.click()"
-        title="Upload Files"
-      >
-        <v-icon>mdi-plus-circle</v-icon>
-        <input
-          v-show="false"
-          ref="inputUpload"
-          type="file"
-          multiple
-          @change="addFiles"
-        />
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-if="path && isFolder(path)"
+            icon
+            @click="$refs.inputUpload.click()"
+            title="Upload Files"
+            v-on="on"
+          >
+            <v-icon>mdi-plus-circle</v-icon>
+            <input
+              v-show="false"
+              ref="inputUpload"
+              type="file"
+              multiple
+              @change="addFiles"
+            />
+          </v-btn>
+        </template>
+        <span>Datei hochladen</span>
+      </v-tooltip>
     </template>
   </v-toolbar>
 </template>

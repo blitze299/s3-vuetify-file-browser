@@ -1,6 +1,6 @@
 <template>
   <v-overlay :absolute="true">
-    <v-card flat light min-width="600px" :loading="loading">
+    <v-card flat light min-width="650px" :loading="loading">
       <v-card-text class="py-3 text-center">
         <div>
           <span class="grey--text">Hochladen nach:</span><br />
