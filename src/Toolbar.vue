@@ -63,27 +63,21 @@
           </v-card-actions>
         </v-card>
       </v-menu>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            v-if="path && isFolder(path)"
-            icon
-            @click="$refs.inputUpload.click()"
-            title="Upload Files"
-            v-on="on"
-          >
-            <v-icon>mdi-plus-circle</v-icon>
-            <input
-              v-show="false"
-              ref="inputUpload"
-              type="file"
-              multiple
-              @change="addFiles"
-            />
-          </v-btn>
-        </template>
-        <span>Datei hochladen</span>
-      </v-tooltip>
+      <v-btn
+        v-if="path && isFolder(path)"
+        icon
+        @click="$refs.inputUpload.click()"
+        title="Upload Files"
+      >
+        <v-icon>mdi-plus-circle</v-icon>
+        <input
+          v-show="false"
+          ref="inputUpload"
+          type="file"
+          multiple
+          @change="addFiles"
+        />
+      </v-btn>
     </template>
   </v-toolbar>
 </template>
@@ -96,30 +90,30 @@ export default {
     path: String,
     endpoints: Object,
     filestructure: Array,
-    axios: Function,
+    axios: Function
   },
   data() {
     return {
       newFolderPopper: false,
-      newFolderName: "",
+      newFolderName: ""
     };
   },
   computed: {
     pathSegments() {
       let path = "/";
       let isFolder = this.path[this.path.length - 1] === "/";
-      let segments = this.path.split("/").filter((item) => item);
+      let segments = this.path.split("/").filter(item => item);
 
       segments = segments.map((item, index) => {
         path += item + (index < segments.length - 1 || isFolder ? "/" : "");
         return {
           name: item,
-          path,
+          path
         };
       });
 
       return segments;
-    },
+    }
   },
   methods: {
     changePath(path) {
@@ -139,20 +133,20 @@ export default {
       this.$emit("loading", true);
       //create folder placeholder file blob
       const blob = new Blob([], {
-        type: "text/plain",
+        type: "text/plain"
       });
       const formPath = removeFirstElementFromPath(this.path);
       const upPath = formPath + name + "/placeholder";
       //get upload url
       const uploadUrl = await this.axios.request({
         url: this.endpoints.upload.url + "?path=" + upPath,
-        method: "get",
+        method: "get"
       });
       //use upload url to upload files
       let config = {
         url: uploadUrl.data.url,
         method: this.endpoints.upload.method,
-        data: blob,
+        data: blob
       };
       await this.axios.request(config);
       this.$emit("folder-created", this.newFolderName);
@@ -162,8 +156,8 @@ export default {
     },
     isFolder(path) {
       return filterData(this.filestructure, "path", path).type === "folder";
-    },
-  },
+    }
+  }
 };
 </script>
 
