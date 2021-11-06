@@ -123,6 +123,7 @@ export default {
     files: { type: Array, default: () => [] },
     icons: Object,
     axios: Function,
+    cleanAxios: Function,
     maxUploadFilesCount: { type: Number, default: 0 },
     maxUploadFileSize: { type: Number, default: 0 },
   },
@@ -211,7 +212,7 @@ export default {
             this.progress = (progressEvent.loaded / progressEvent.total) * 100;
           },
         };
-        await this.axios.request(config);
+        await this.cleanAxios.request(config);
       }
 
       this.uploading = false;

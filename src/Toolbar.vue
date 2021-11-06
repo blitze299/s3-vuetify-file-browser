@@ -90,7 +90,8 @@ export default {
     path: String,
     endpoints: Object,
     filestructure: Array,
-    axios: Function
+    axios: Function,
+    cleanAxios: Function
   },
   data() {
     return {
@@ -148,7 +149,7 @@ export default {
         method: this.endpoints.upload.method,
         data: blob
       };
-      await this.axios.request(config);
+      await this.cleanAxios.request(config);
       this.$emit("folder-created", this.newFolderName);
       this.newFolderPopper = false;
       this.newFolderName = "";

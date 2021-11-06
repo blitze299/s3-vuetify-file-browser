@@ -155,6 +155,7 @@ export default {
     path: String,
     endpoints: Object,
     axios: Function,
+    cleanAxios: Function,
     refreshPending: Boolean,
   },
   components: {
