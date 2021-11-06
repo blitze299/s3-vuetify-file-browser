@@ -129,11 +129,13 @@ export default {
       uploadingFiles: false, // or an Array of files
       refreshPending: false,
       axiosInstance: null,
+      cleanAxios: null,
       presetEndpoints: {},
     };
   },
   created() {
     this.axiosInstance = this.axios || axios.create(this.axiosConfig);
+    this.cleanAxios = axios.create();
   },
   mounted() {
     if (!this.path && !(this.tree && this.$vuetify.breakpoint.smAndUp)) {
@@ -151,7 +153,7 @@ export default {
         method: this.endpoints.list.method,
       });
       //query s3 data with url from backend
-      const s3data = await this.axiosInstance.request({
+      const s3data = await this.cleanAxios.request({
         url: s3url.data.url,
         method: this.endpoints.list.method,
       });
