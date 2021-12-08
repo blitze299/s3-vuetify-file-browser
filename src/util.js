@@ -10,7 +10,7 @@ export function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
-export function formatS3ToPathObj(raw) {
+export function formatS3ToPathObj(raw, withPlaceholder) {
   const rawJSON = JSON.parse(convertXmlToJson(raw));
   let data = rawJSON.ListBucketResult.Contents;
   //check if bucket is empty then build first empty object manuak
@@ -20,18 +20,18 @@ export function formatS3ToPathObj(raw) {
         children: [],
         name: removeSlashFromString(rawJSON.ListBucketResult.Prefix._text),
         path: removeSlashFromString(rawJSON.ListBucketResult.Prefix._text),
-        type: "folder",
-      },
+        type: "folder"
+      }
     ];
   }
   //if data is not array (one item) -> make one
   if (!Array.isArray(data)) {
     data = [data];
   }
-  const getTree = (data) =>
+  const getTree = data =>
     data.reduce((tree, path) => {
       path.Key._text.split("/").reduce((t, name, i, a) => {
-        let temp = t.find((q) => q.name === name);
+        let temp = t.find(q => q.name === name);
         // test if item = is the last one of the last path array items then it is a file
         const nameSplit = path.Key._text.split("/")[
           path.Key._text.split("/").length - 1
@@ -47,17 +47,29 @@ export function formatS3ToPathObj(raw) {
                   name,
                   path: a.slice(0, i + 1).join("/"),
                   elem: path,
-                  type: "file",
+                  type: "file"
                 })
               );
             } else {
               //do not push placeholder so they are not displayed
-              temp = {
-                name,
-                path: a.slice(0, i + 1).join("/"),
-                elem: path,
-                type: "placeholder",
-              };
+              //select on withPlaceholder when option set
+              if (withPlaceholder) {
+                t.push(
+                  (temp = {
+                    name,
+                    path: a.slice(0, i + 1).join("/"),
+                    elem: path,
+                    type: "placeholder"
+                  })
+                );
+              } else {
+                temp = {
+                  name,
+                  path: a.slice(0, i + 1).join("/"),
+                  elem: path,
+                  type: "placeholder"
+                };
+              }
             }
         } else {
           // no file -> path
@@ -67,7 +79,7 @@ export function formatS3ToPathObj(raw) {
                 name,
                 path: a.slice(0, i + 1).join("/"),
                 children: [],
-                type: "folder",
+                type: "folder"
               })
             );
         }
@@ -97,7 +109,7 @@ export function formatDateFromString(string) {
 }
 
 export function formatDate(date, hours, replacement) {
-  let formatDateNumber = (dateNumber) =>
+  let formatDateNumber = dateNumber =>
     dateNumber < 10 ? "0" + dateNumber : dateNumber;
 
   try {
@@ -164,6 +176,22 @@ export function removeFirstElementFromPath(path) {
   return joinString;
 }
 
+export function addUploadHandle(name) {
+  if (!checkUploadHandle(name)) {
+    return "ONDS_" + name;
+  } else {
+    return name;
+  }
+}
+
+export function removeUploadHandle(name) {
+  return name.replace(/^ONDS_/, "");
+}
+
+export function checkUploadHandle(name) {
+  return /^ONDS_/.test(name);
+}
+
 export default {
   formatBytes,
   getFileEnding,
@@ -171,4 +199,7 @@ export default {
   filterData,
   removeSlashFromString,
   removeFirstElementFromPath,
+  addUploadHandle,
+  removeUploadHandle,
+  checkUploadHandle
 };

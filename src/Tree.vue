@@ -8,7 +8,6 @@
     <div class="grow scroll-x">
       <v-treeview
         :open="open"
-        :active="active"
         :items="filestructure"
         :search="filter"
         v-on:update:active="activeChanged"
@@ -18,7 +17,6 @@
         activatable
         transition
         class="folders-tree"
-        open-all
       >
         <template v-slot:prepend="{ item, open }">
           <v-icon v-if="item.type === 'folder'">{{
@@ -32,7 +30,7 @@
             Dateien
           </div>
           <div v-else>
-            {{ item.name }}
+            {{ removeUploadHandle(item.name) }}
           </div>
         </template>
       </v-treeview>
@@ -61,7 +59,7 @@
 </template>
 
 <script>
-import { getFileEnding } from "./util";
+import { getFileEnding, removeUploadHandle } from "./util";
 export default {
   props: {
     filestructure: Array,
@@ -70,16 +68,16 @@ export default {
     endpoints: Object,
     axios: Function,
     cleanAxios: Function,
-    refreshPending: Boolean,
+    refreshPending: Boolean
   },
   data() {
     return {
       open: [],
-      active: [],
-      filter: "",
+      filter: ""
     };
   },
   methods: {
+    removeUploadHandle,
     getFileEnding,
     init() {
       this.open = [];
@@ -88,7 +86,6 @@ export default {
       }
     },
     activeChanged(active) {
-      this.active = active;
       let path = "";
       if (active.length) {
         path = active[0];
@@ -111,14 +108,13 @@ export default {
         }
       }
       return null;
-    },
+    }
   },
   watch: {
     storage() {
       this.init();
     },
     path() {
-      this.active = [this.path];
       if (!this.open.includes(this.path)) {
         this.open.push(this.path);
       }
@@ -129,7 +125,7 @@ export default {
         this.$emit("loadData");
         this.$emit("refreshed");
       }
-    },
+    }
   },
   created() {
     this.init();

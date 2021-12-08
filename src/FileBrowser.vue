@@ -13,7 +13,7 @@
     <v-row no-gutters>
       <v-col v-if="tree && $vuetify.breakpoint.smAndUp" sm="auto">
         <tree
-          :filestructure="filestructure"
+          :filestructure="filestructureTree"
           :path="path"
           :icons="icons"
           :endpoints="endpoints"
@@ -94,7 +94,7 @@ const fileIcons = {
   txt: "mdi-file-document",
   xls: "mdi-file-excel",
   xlsx: "mdi-file-excel",
-  other: "mdi-file-outline",
+  other: "mdi-file-outline"
 };
 
 export default {
@@ -102,11 +102,11 @@ export default {
     Toolbar,
     Tree,
     List,
-    Upload,
+    Upload
   },
   model: {
     prop: "path",
-    event: "change",
+    event: "change"
   },
   props: {
     // show tree view
@@ -123,18 +123,19 @@ export default {
     maxUploadFilesCount: { type: Number, default: 10 },
     // max file size to upload. Unlimited by default
     maxUploadFileSize: { type: Number, default: 104857600 },
-    listUrl: { type: String },
+    listUrl: { type: String }
   },
   data() {
     return {
       filestructure: [],
+      filestructureTree: [],
       loading: 0,
       path: "",
       uploadingFiles: false, // or an Array of files
       refreshPending: false,
       axiosInstance: null,
       cleanAxios: null,
-      presetEndpoints: {},
+      presetEndpoints: {}
     };
   },
   created() {
@@ -154,15 +155,16 @@ export default {
       //get s3url from backend
       const s3url = await this.axiosInstance.request({
         url: this.endpoints.list.url,
-        method: this.endpoints.list.method,
+        method: this.endpoints.list.method
       });
       //query s3 data with url from backend
       const s3data = await this.cleanAxios.request({
         url: s3url.data.url,
-        method: this.endpoints.list.method,
+        method: this.endpoints.list.method
       });
-      const result = formatS3ToPathObj(s3data.data);
-      this.filestructure = result;
+      //create 2 copies of filestructure
+      this.filestructure = formatS3ToPathObj(s3data.data, true);
+      this.filestructureTree = formatS3ToPathObj(s3data.data, false);
       this.loadingChanged(false);
     },
     loadingChanged(loading) {
@@ -176,7 +178,7 @@ export default {
       files = Array.from(files);
 
       if (this.maxUploadFileSize) {
-        files = files.filter((file) => file.size <= this.maxUploadFileSize);
+        files = files.filter(file => file.size <= this.maxUploadFileSize);
       }
 
       if (this.uploadingFiles === false) {
@@ -208,7 +210,7 @@ export default {
       this.loadData();
       this.$emit("change", path);
     }
-  },
+  }
 };
 </script>
 

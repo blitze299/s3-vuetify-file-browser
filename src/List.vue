@@ -31,7 +31,10 @@
       v-else-if="isFile"
       class="grow d-flex justify-center align-center"
     >
-      <h4>Datei: {{ path }}</h4>
+      <h4>
+        Datei:
+        {{ removeUploadHandle(path.split("/")[path.split("/").length - 1]) }}
+      </h4>
       <v-btn class="ml-1" icon @click.stop="getFileFromPath(path)">
         <v-icon color="grey darken-1">mdi-download</v-icon>
       </v-btn>
@@ -49,12 +52,16 @@
             <v-icon>mdi-folder-outline</v-icon>
           </v-list-item-avatar>
           <v-list-item-content class="py-2">
-            <v-list-item-title v-text="item.name"></v-list-item-title>
+            <v-list-item-title>{{
+              removeUploadHandle(item.name)
+            }}</v-list-item-title>
           </v-list-item-content>
           <v-list-item-action>
             <v-btn
               icon
-              :disabled="item.children.length > 0"
+              :disabled="
+                !(checkUploadHandle(item.name) && item.children.length == 1)
+              "
               @click.stop="deleteItem(item)"
             >
               <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
@@ -76,7 +83,9 @@
           </v-list-item-avatar>
 
           <v-list-item-content class="py-2">
-            <v-list-item-title v-text="item.name"></v-list-item-title>
+            <v-list-item-title>{{
+              removeUploadHandle(item.name)
+            }}</v-list-item-title>
             <v-list-item-subtitle>{{
               formatBytes(item.elem.Size._text) +
                 " - " +
@@ -86,7 +95,11 @@
 
           <v-list-item-action>
             <v-row>
-              <v-btn icon @click.stop="deleteItem(item)">
+              <v-btn
+                icon
+                :disabled="!checkUploadHandle(item.name)"
+                @click.stop="deleteItem(item)"
+              >
                 <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
               </v-btn>
               <v-btn icon @click.stop="shareItem(item)">
@@ -144,6 +157,8 @@ import {
   formatDateFromString,
   filterData,
   removeFirstElementFromPath,
+  checkUploadHandle,
+  removeUploadHandle
 } from "./util";
 import Confirm from "./Confirm.vue";
 import Share from "./Share.vue";
@@ -156,11 +171,11 @@ export default {
     endpoints: Object,
     axios: Function,
     cleanAxios: Function,
-    refreshPending: Boolean,
+    refreshPending: Boolean
   },
   components: {
     Confirm,
-    Share,
+    Share
   },
   data() {
     return {
@@ -170,8 +185,8 @@ export default {
       shareSnackbar: {
         open: false,
         text: "",
-        link: "",
-      },
+        link: ""
+      }
     };
   },
   computed: {
@@ -188,12 +203,14 @@ export default {
     },
     isFile() {
       return filterData(this.filestructure, "path", this.path).type === "file";
-    },
+    }
   },
   methods: {
     formatDateFromString,
     formatBytes,
     getFileEnding,
+    checkUploadHandle,
+    removeUploadHandle,
     changePath(path) {
       this.$emit("path-changed", path);
     },
@@ -204,7 +221,9 @@ export default {
     async shareItem(item) {
       let shared = await this.$refs.share.open(
         "Teilen",
-        `Die Datei<br><em>${item.name}</em><br>wird geteilt und der Link in die Zwischenablage kopiert.<br>Der Link is <em>24 Stunden</em> gültig`
+        `Die Datei<br><em>${removeUploadHandle(
+          item.name
+        )}</em><br>wird geteilt und der Link in die Zwischenablage kopiert.<br>Der Link is <em>24 Stunden</em> gültig`
       );
 
       if (shared) {
@@ -221,14 +240,14 @@ export default {
         const downloadUrl = await this.axios.request({
           url:
             this.endpoints.download.url + "?path=" + formPath + "&lifetime=24",
-          method: "get",
+          method: "get"
         });
         //copy url to clipboard
         this.copyToClipboard(downloadUrl.data.url);
         this.shareSnackbar = {
           open: true,
           text: "Link erfolgreich in die Zwischenablage kopiert",
-          link: downloadUrl.data.url,
+          link: downloadUrl.data.url
         };
         this.$emit("loading", false);
       }
@@ -241,9 +260,11 @@ export default {
     async deleteItem(item) {
       let confirmed = await this.$refs.confirm.open(
         "Löschen",
-        `Soll  ${item.type === "folder" ? "der Ordner" : "die Datei"}<br><em>${
+        `Soll  ${
+          item.type === "folder" ? "der Ordner" : "die Datei"
+        }<br><em>${removeUploadHandle(
           item.name
-        }</em><br>wirklich gelöscht werden?`
+        )}</em><br>wirklich gelöscht werden?`
       );
 
       if (confirmed) {
@@ -253,13 +274,13 @@ export default {
         if (item.type === "file") {
           await this.axios.request({
             url: this.endpoints.delete.url + "?path=" + formPath,
-            method: this.endpoints.delete.method,
+            method: this.endpoints.delete.method
           });
         } else if (item.type === "folder") {
           await this.axios.request({
             url:
               this.endpoints.delete.url + "?path=" + formPath + "/placeholder",
-            method: this.endpoints.delete.method,
+            method: this.endpoints.delete.method
           });
         }
         this.$emit("file-deleted");
@@ -290,7 +311,7 @@ export default {
       //get download url
       const downloadUrl = await this.axios.request({
         url: this.endpoints.download.url + "?path=" + formPath,
-        method: "get",
+        method: "get"
       });
       return downloadUrl.data.url;
     },
@@ -300,7 +321,7 @@ export default {
         let filteredDirs = [];
         const data = filterData(this.filestructure, "path", this.path);
         if (data) {
-          data.children.forEach((r) => {
+          data.children.forEach(r => {
             //chef if item is object or directory
             if (r.type === type) {
               filteredDirs.push(r);
@@ -309,7 +330,7 @@ export default {
         }
         return filteredDirs;
       }
-    },
+    }
   },
   watch: {
     async refreshPending() {
@@ -317,8 +338,8 @@ export default {
         await this.load();
         this.$emit("refreshed");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

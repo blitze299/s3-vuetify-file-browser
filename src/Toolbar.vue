@@ -11,7 +11,7 @@
           :input-value="index === pathSegments.length - 1"
           :key="index + '-btn'"
           @click="changePath(segment.path)"
-          ><div v-if="index != 0">{{ segment.name }}</div>
+          ><div v-if="index != 0">{{ removeUploadHandle(segment.name) }}</div>
           <div v-else>Dateien</div></v-btn
         >
       </template>
@@ -83,7 +83,12 @@
 </template>
 
 <script>
-import { filterData, removeFirstElementFromPath } from "./util";
+import {
+  filterData,
+  removeFirstElementFromPath,
+  addUploadHandle,
+  removeUploadHandle
+} from "./util";
 
 export default {
   props: {
@@ -117,6 +122,8 @@ export default {
     }
   },
   methods: {
+    addUploadHandle,
+    removeUploadHandle,
     changePath(path) {
       this.$emit("path-changed", path);
     },
@@ -137,12 +144,21 @@ export default {
         type: "text/plain"
       });
       const formPath = removeFirstElementFromPath(this.path);
-      const upPath = formPath + name + "/placeholder";
+      console.warn(formPath);
+      let upPath = "";
+      if (formPath === "") {
+        //dir in root
+        upPath = formPath + addUploadHandle(name) + "/placeholder";
+      } else {
+        //dir not in root
+        upPath = formPath + "/" + addUploadHandle(name) + "/placeholder";
+      }
       //get upload url
       const uploadUrl = await this.axios.request({
         url: this.endpoints.upload.url + "?path=" + upPath,
         method: "get"
       });
+      console.log(addUploadHandle(upPath));
       //use upload url to upload files
       let config = {
         url: uploadUrl.data.url,

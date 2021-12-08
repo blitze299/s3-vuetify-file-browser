@@ -2,10 +2,6 @@
   <v-overlay :absolute="true">
     <v-card flat light min-width="650px" :loading="loading">
       <v-card-text class="py-3 text-center">
-        <div>
-          <span class="grey--text">Hochladen nach:</span><br />
-          <v-chip>{{ path }}</v-chip>
-        </div>
         <div v-if="maxUploadFilesCount">
           <span class="grey--text"
             >Maximale Anzahl an Deteien: {{ maxUploadFilesCount }}</span
@@ -112,7 +108,11 @@
 </template>
 
 <script>
-import { formatBytes, removeFirstElementFromPath } from "./util";
+import {
+  formatBytes,
+  removeFirstElementFromPath,
+  addUploadHandle
+} from "./util";
 
 const imageMimeTypes = ["image/png", "image/jpeg"];
 
@@ -125,28 +125,28 @@ export default {
     axios: Function,
     cleanAxios: Function,
     maxUploadFilesCount: { type: Number, default: 0 },
-    maxUploadFileSize: { type: Number, default: 0 },
+    maxUploadFileSize: { type: Number, default: 0 }
   },
   data() {
     return {
       loading: false,
       uploading: false,
       progress: 0,
-      listItems: [],
+      listItems: []
     };
   },
   methods: {
     formatBytes,
-
+    addUploadHandle,
     async filesMap(files) {
-      let promises = Array.from(files).map((file) => {
+      let promises = Array.from(files).map(file => {
         let result = {
           name: file.name,
           type: file.type,
           size: file.size,
-          extension: file.name.split(".").pop(),
+          extension: file.name.split(".").pop()
         };
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           if (!imageMimeTypes.includes(result.type)) {
             return resolve(result);
           }
@@ -191,7 +191,7 @@ export default {
         let upPath = "";
         if (formPath != "") {
           //subdirectory
-          upPath = formPath + "/" + file.name;
+          upPath = formPath + "/" + addUploadHandle(file.name);
         } else {
           //main directory
           upPath = file.name;
@@ -199,25 +199,25 @@ export default {
         //get upload url
         const uploadUrl = await this.axios.request({
           url: this.endpoint.url + "?path=" + upPath,
-          method: "get",
+          method: "get"
         });
         let config = {
           url: uploadUrl.data.url,
           method: this.endpoint.method,
           data: file,
           headers: {
-            "Content-Type": file.type,
+            "Content-Type": file.type
           },
-          onUploadProgress: (progressEvent) => {
+          onUploadProgress: progressEvent => {
             this.progress = (progressEvent.loaded / progressEvent.total) * 100;
-          },
+          }
         };
         await this.cleanAxios.request(config);
       }
 
       this.uploading = false;
       this.$emit("uploaded");
-    },
+    }
   },
   watch: {
     files: {
@@ -227,9 +227,9 @@ export default {
         this.loading = true;
         this.listItems = await this.filesMap(this.files);
         this.loading = false;
-      },
-    },
-  },
+      }
+    }
+  }
 };
 </script>
 
