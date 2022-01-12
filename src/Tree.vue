@@ -36,15 +36,15 @@
       </v-treeview>
     </div>
     <v-divider></v-divider>
-    <v-toolbar dense flat class="shrink">
+    <v-toolbar  flat class="shrink">
       <v-text-field
-        solo
+        
         flat
         hide-details
         label="Filter"
         v-model="filter"
         prepend-inner-icon="mdi-filter-outline"
-        class="ml-n3"
+        class="ml-n1"
       ></v-text-field>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
