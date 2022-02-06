@@ -1,6 +1,7 @@
 <template>
   <v-card
     flat
+    outlined
     tile
     height="70vh"
     width="100%"
