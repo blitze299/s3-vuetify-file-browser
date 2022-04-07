@@ -32,12 +32,9 @@
       v-else-if="isFile"
       class="grow d-flex justify-center align-center"
     >
-      <h4>
-        Datei:
+      <v-btn primary outlined @click.stop="getFileFromPath(path)">
         {{ removeUploadHandle(path.split("/")[path.split("/").length - 1]) }}
-      </h4>
-      <v-btn class="ml-1" icon @click.stop="getFileFromPath(path)">
-        <v-icon color="grey darken-1">mdi-download</v-icon>
+        <v-icon right color="grey darken-1">mdi-download</v-icon>
       </v-btn>
     </v-card-text>
     <v-card-text v-else-if="dirs.length || files.length" class="grow">
