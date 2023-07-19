@@ -125,6 +125,11 @@ export default {
         this.$emit("loadData");
         this.$emit("refreshed");
       }
+    },
+    filestructure() {
+      if(this.filestructure && this.filestructure.length != 0) {
+        this.open = [this.filestructure[0].name]
+      }
     }
   },
   created() {
