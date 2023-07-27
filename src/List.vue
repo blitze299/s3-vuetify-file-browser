@@ -57,9 +57,6 @@
           <v-list-item-action>
             <v-btn
               icon
-              :disabled="
-                !(checkUploadHandle(item.name) && item.children.length == 1)
-              "
               @click.stop="deleteItem(item)"
             >
               <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
@@ -95,7 +92,6 @@
             <v-row>
               <v-btn
                 icon
-                :disabled="!checkUploadHandle(item.name)"
                 @click.stop="deleteItem(item)"
               >
                 <v-icon color="grey darken-1">mdi-delete-outline</v-icon>
