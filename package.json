@@ -1,6 +1,6 @@
 {
   "name": "s3-vuetify-file-browser",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "description": "Open source file manager component for Vue.js using S3 presigned URLs. Requires Vuetify v2.0 or higher",
   "main": "src/index.js",
   "scripts": {
