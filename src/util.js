@@ -192,6 +192,15 @@ export function checkUploadHandle(name) {
   return /^ONDS_/.test(name);
 }
 
+export function truncateString(str, maxLength) {
+  if (str.length <= maxLength) {
+    return str;
+  }
+
+  var middle = Math.floor(maxLength / 2);
+  return str.substr(0, middle) + "..." + str.substr(str.length - middle);
+}
+
 export default {
   formatBytes,
   getFileEnding,
@@ -201,5 +210,6 @@ export default {
   removeFirstElementFromPath,
   addUploadHandle,
   removeUploadHandle,
-  checkUploadHandle
+  checkUploadHandle,
+  truncateString
 };
