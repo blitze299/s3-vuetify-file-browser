@@ -11,7 +11,7 @@
           :input-value="index === pathSegments.length - 1"
           :key="index + '-btn'"
           @click="changePath(segment.path)"
-          ><div v-if="index != 0">{{ truncateString(removeUploadHandle(segment.name), 10) }}</div>
+          ><div v-if="index != 0">{{ truncateString(removeUploadHandle(segment.name), 20) }}</div>
           <div v-else>Dateien</div></v-btn
         >
       </template>
