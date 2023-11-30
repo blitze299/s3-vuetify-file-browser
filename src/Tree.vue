@@ -30,7 +30,7 @@
             Dateien
           </div>
           <div v-else>
-            {{ removeUploadHandle(item.name) }}
+            {{ truncateString(removeUploadHandle(item.name), 10) }}
           </div>
         </template>
       </v-treeview>
@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { getFileEnding, removeUploadHandle } from "./util";
+import { getFileEnding, removeUploadHandle, truncateString } from "./util";
 export default {
   props: {
     filestructure: Array,
@@ -79,6 +79,7 @@ export default {
   methods: {
     removeUploadHandle,
     getFileEnding,
+    truncateString,
     init() {
       this.open = [];
       if (this.path !== "") {
