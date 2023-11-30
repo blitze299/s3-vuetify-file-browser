@@ -30,7 +30,7 @@
             Dateien
           </div>
           <div v-else>
-            {{ truncateString(removeUploadHandle(item.name), 10) }}
+            {{ truncateString(removeUploadHandle(item.name), 20) }}
           </div>
         </template>
       </v-treeview>
