@@ -11,7 +11,7 @@
           :input-value="index === pathSegments.length - 1"
           :key="index + '-btn'"
           @click="changePath(segment.path)"
-          ><div v-if="index != 0">{{ removeUploadHandle(segment.name) }}</div>
+          ><div v-if="index != 0">{{ truncateString(removeUploadHandle(segment.name), 10) }}</div>
           <div v-else>Dateien</div></v-btn
         >
       </template>
@@ -87,7 +87,8 @@ import {
   filterData,
   removeFirstElementFromPath,
   addUploadHandle,
-  removeUploadHandle
+  removeUploadHandle,
+  truncateString
 } from "./util";
 
 export default {
@@ -124,6 +125,7 @@ export default {
   methods: {
     addUploadHandle,
     removeUploadHandle,
+    truncateString,
     changePath(path) {
       this.$emit("path-changed", path);
     },
