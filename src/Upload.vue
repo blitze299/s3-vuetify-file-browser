@@ -4,7 +4,7 @@
       <v-card-text class="py-3 text-center">
         <div v-if="maxUploadFilesCount">
           <span class="grey--text"
-            >Maximale Anzahl an Deteien: {{ maxUploadFilesCount }}</span
+            >Maximale Anzahl an Dateien: {{ maxUploadFilesCount }}</span
           >
         </div>
         <div v-if="maxUploadFileSize">
